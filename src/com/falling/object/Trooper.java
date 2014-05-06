@@ -1,7 +1,5 @@
 package com.falling.object;
 
-import java.util.Date;
-
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -16,6 +14,7 @@ import android.hardware.SensorManager;
 public class Trooper extends GameObject
 {	
 	private SensorManager manager;
+	private final static double MAX_SPEED = 10.0;
 	
 	public Trooper(Context context)
     {
@@ -57,9 +56,8 @@ public class Trooper extends GameObject
 
         //TODO handle collisions
     }
-    
-    
-private SensorEventListener listener = new SensorEventListener() {
+     
+    private SensorEventListener listener = new SensorEventListener() {
 		
 		@Override
 		public void onSensorChanged(SensorEvent event) {
@@ -78,8 +76,9 @@ private SensorEventListener listener = new SensorEventListener() {
 			double den = accelmag * gravmag;
 			
 			double angle = Math.toDegrees(Math.acos(num / den));
-			boolean left = angle > 0;
-			double percentage = Math.abs(angle) / 90.0;
+			double percentage = angle / 90.0;
+			
+			speedX = (int) (percentage * MAX_SPEED);			
 		}
 		
 		@Override
