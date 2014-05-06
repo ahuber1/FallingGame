@@ -130,4 +130,10 @@ public abstract class GameObject
     {
         this.speedY = speedY;
     }
+    
+    public boolean alive() {
+    	return alive;
+    }
+    
+    public abstract void respawn();
 }

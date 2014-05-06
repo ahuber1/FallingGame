@@ -43,4 +43,10 @@ public class Trooper extends GameObject
 
         //TODO handle collisions
     }
+
+	@Override
+	public void respawn() {
+		// TODO Auto-generated method stub
+		
+	}
 }

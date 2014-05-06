@@ -29,7 +29,7 @@ public class Bird extends GameObject
         //TODO Handle collision with Trooper
     }
 
-    private void respawn()
+    public void respawn()
     {
         speedY = -10;
         centerY = randomSpawnY();
