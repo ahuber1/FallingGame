@@ -1,10 +1,14 @@
 package com.falling.object;
 
+import com.falling.FallingGame;
+
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.view.Surface;
+import android.view.WindowManager;
 
 /**
  * This manages information regarding the paratrooper, the hero of our game!
@@ -13,21 +17,25 @@ import android.hardware.SensorManager;
  */
 public class Trooper extends GameObject
 {	
-	private SensorManager manager;
-	private final static double MAX_SPEED = 10.0;
+	private final static double MAX_SPEED = 50.0;
+	private int orientation;
 	
-	public Trooper(Context context)
-    {
+	public Trooper()
+    {	
         super();
         alive = true;
         centerX = (windowWidth + 48) / 2;
         centerY = 200;
         speedY = 0;
         speedX = 0;
-        manager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+       
+        SensorManager manager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
 		manager.registerListener(listener, 
 				manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), 
 				SensorManager.SENSOR_DELAY_GAME);
+		
+		WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+		orientation = wm.getDefaultDisplay().getRotation();
     }
 
     public void update()
@@ -61,24 +69,30 @@ public class Trooper extends GameObject
 		
 		@Override
 		public void onSensorChanged(SensorEvent event) {
-			double accelx = event.values[0];
-			double accely = event.values[1];
-			double accelz = event.values[2];
+			if(FallingGame.useAccelerometer.get() == false)
+				return;			
 			
-			double gravx = 0;
-			double gravy = accelz > accely ? 0 : 9.8;
-			double gravz = accelz > accely ? 9.8 : 0;
+			double x = Math.abs(event.values[0]);
+			double y = Math.abs(event.values[1]);
+			double xraw = event.values[0];
 			
-			double accelmag = Math.sqrt(Math.pow(accelx, 2) + Math.pow(accely, 2) + Math.pow(accelz, 2));
-			double gravmag = 9.8;
+			if(orientation == Surface.ROTATION_90 || orientation == Surface.ROTATION_270) {
+				double temp = x;
+				x = y;
+				y = temp;
+				
+				xraw = event.values[1];
+			}
 			
-			double num = accelx * gravx + accely * gravy + accelz * gravz;
-			double den = accelmag * gravmag;
+			double ang = (90 * x) / 9.8;			
+			double percentage = ang / 90.0;
 			
-			double angle = Math.toDegrees(Math.acos(num / den));
-			double percentage = angle / 90.0;
+			if(orientation == Surface.ROTATION_180 || orientation == Surface.ROTATION_270)
+				xraw *= -1.0;
 			
-			speedX = (int) (percentage * MAX_SPEED);			
+			double direction = xraw / x;
+			
+			speedX = (int) (percentage * MAX_SPEED * direction);			
 		}
 		
 		@Override

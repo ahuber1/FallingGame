@@ -59,7 +59,7 @@ public class GameScreen extends Screen
         //Two tiled backgrounds to repeat.
         bg1 = new Background(0,0);
         bg2 = new Background(0, 1373);
-        trooper = new Trooper();
+        trooper = FallingGame.trooper;
         bird = new Bird();
 //        missile = new NormalMissile();
         balloon = new Balloon();
