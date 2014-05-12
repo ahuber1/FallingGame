@@ -27,46 +27,21 @@ import com.gameobjects.Trooper;
 
 public class GameWorld extends SurfaceView {
 	
-	SurfaceHolder holder;
+	private SurfaceHolder holder;
 	
-	ArrayList<GameObject> gameObjects;
+	private ArrayList<GameObject> gameObjects;
 	
-	public GameWorld(Context context){
+	public GameWorld(Context context, ArrayList<GameObject> gameObjects){
 		
 		super(context);
 		
 		holder = this.getHolder();
 		
-		gameObjects = new ArrayList<GameObject>();
+		this.gameObjects = gameObjects;
 		
 		this.setBackgroundColor(Color.WHITE);
 		this.setFocusableInTouchMode(true);
 		
-	}
-	
-	public void updatePhysics(float deltaTime){
-		
-		// this is where you obtain the height and width of the View
-		// I couldn't find a better place to put this code because
-		// you have to wait until the SurfaceView actually is rendered
-		// for it to have height and width attributes. Putting it in a 
-		// constructor didn't work.
-		/*Game.screenHeight = getHeight();
-		Game.screenWidth = getWidth();*/
-		
-		for(int i = 0; i < gameObjects.size(); i++){
-			
-			gameObjects.get(i).updatePhysics(deltaTime);
-		}
-		
-	}
-	
-	
-	public boolean stopConditionPresent(){
-		
-		Trooper trooper = (Trooper)gameObjects.get(1);
-		
-		return (trooper.isAlive() == false);
 	}
 
 	public void onDraw(Canvas canvas){
@@ -75,7 +50,6 @@ public class GameWorld extends SurfaceView {
 			
 			gameObjects.get(i).draw(canvas);
 		}
-		
 	}
 	
 	
