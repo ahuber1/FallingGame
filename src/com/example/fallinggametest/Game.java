@@ -26,7 +26,7 @@ import android.view.View.OnTouchListener;
  * @author Evan Hanger, Andrew Huber, Mark Judy
  *
  */
-public class Game extends Activity implements OnTouchListener{
+public class Game extends Activity implements OnTouchListener {
 
 	/** The view in which everything is visible */
 	private GameWorld gameWorld;
@@ -99,9 +99,15 @@ public class Game extends Activity implements OnTouchListener{
 		// give gameWorld a touch listener
 		gameWorld.setOnTouchListener(this);
 		
+		
+		 
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
 		// create and start the GameLoop Runnable class
 		startGameLoop();
-		 
 	}
 	
 	
@@ -110,10 +116,19 @@ public class Game extends Activity implements OnTouchListener{
 	 */
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
-		
-		float xpos = event.getX();
-		
-		trooper.setDestination(new PhysVector(xpos, trooper.getYPos()));
+		if(event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_MOVE) {
+			float xPos = event.getX();
+			float mid = screenWidth / 2;
+			
+			if(xPos < mid)
+				trooper.setVelocityX(Trooper.MAX_SPEED * -1);
+			else
+				trooper.setVelocityX(Trooper.MAX_SPEED);
+		}
+		else if(event.getAction() == MotionEvent.ACTION_UP)
+			trooper.setVelocityX(0.0f);
+		else
+			return true; 
 		
 		return true;
 	}
@@ -128,7 +143,7 @@ public class Game extends Activity implements OnTouchListener{
 		
 		// stop the gameLoop, end the game activity
 		gameLoop.safeStop();
-		finish();
+		
 	}
 	
 	public void redrawCanvas(){
@@ -198,7 +213,8 @@ public class Game extends Activity implements OnTouchListener{
 	 */
 	public void addInitialGameObjects(){
 		
-		SkyBackground background = new SkyBackground( BitmapFactory.decodeResource(getResources(), R.drawable.background));
+		SkyBackground background = new SkyBackground(BitmapFactory.decodeResource(getResources(), 
+				R.drawable.background), screenWidth, screenHeight);
 		this.skyBackground = background; // store a reference to skyBackground
 		addGameObject(background);
 		

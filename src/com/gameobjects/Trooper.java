@@ -19,7 +19,7 @@ public class Trooper extends GameObject{
 	
 	private PhysVector destination;
 	
-	private static final float TROOPER_SPEED = 200;
+	public static final float MAX_SPEED = 200;
 	
 	private int orientation;
 	private boolean useAccelerometer;
@@ -86,7 +86,7 @@ public class Trooper extends GameObject{
 			} else {
 				
 				
-				float speed = TROOPER_SPEED;
+				float speed = MAX_SPEED;
 				PhysVector newVelocity = PhysVector.subtract(destination, pos);
 				newVelocity.becomeUnitVector();
 				
@@ -129,7 +129,7 @@ private SensorEventListener listener = new SensorEventListener() {
 			
 			double direction = xraw / x;
 			
-			dx = (float) (percentage * TROOPER_SPEED * direction);
+			dx = (float) (percentage * MAX_SPEED * direction);
 		}
 		
 		@Override
