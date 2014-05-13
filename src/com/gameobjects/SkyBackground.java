@@ -1,83 +1,59 @@
 package com.gameobjects;
 
-import com.example.fallinggametest.GameLoop;
-
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.util.Log;
+import android.util.Config;
 
-public class SkyBackground extends GameObject {
+public class SkyBackground extends GameObject{
 	
-	/** 
-	 * Since this sky background scrolls , this is the
-	 * second Bitmap that gets pushed under the first
-	 */
-	protected Bitmap sprite2;
-	
-	/**
-	 * The width of the screen
-	 */
-	public final int SCREEN_WIDTH;
-	
-	/** The height of the screen */
-	public final int SCREEN_HEIGHT;
-	
-	/** The x position of the second sprite */
-	protected int sprite2x;
-	
-	/** The y position of the second sprite */
-	protected int sprite2y;
-	
-	/**
-	 * Creates a background of the sky
-	 * @param sprite The sprite that will be used to represent the background
-	 * @param screenWidth The width of the screen this sprite will be displayed on
-	 * @param screenHeight The height of the screen this sprite will be displayed on
-	 */
-	public SkyBackground(Bitmap sprite, int screenWidth, int screenHeight) {
-		super(0, screenHeight / -4, sprite);
+	private Bitmap sprite2;
+	private float sprite2x, sprite2y;
+	private int screenWidth;
+	private int screenHeight;
+
+	public SkyBackground(Bitmap sprite, int screenWidth, int screenHeight){
 		
-		Log.i("SkyBackground", "" + screenHeight);
-		Log.i("SkyBackground", "" + sprite.getHeight());
+		x = y = 0;
+		sprite2x = 0;
+		sprite2y = sprite.getHeight();
 		
-		this.SCREEN_WIDTH = screenWidth;
-		this.SCREEN_HEIGHT = screenHeight;
+		dx = 0;
+		dy = -400;
+		
+		this.sprite = sprite;
 		this.sprite2 = sprite;
-		this.sprite2x = 0;
-		this.sprite2y = sprite2.getHeight();
-		spawn(0, 0, 0, MAX_Y);
+		
+		this.screenHeight = screenHeight;
+		this.screenWidth = screenWidth;
 	}
 	
-	private byte top = 1;
+	public void updatePhysics(float deltaTime){
+
+		y += dy * deltaTime;
+
+		sprite2y += dy * deltaTime;
 		
-	@Override
-	public void updatePhysics(double deltaTime) {
-		int bottom1 = sprite.getHeight() - Math.abs(y) - 5; // 5 compensates for white border in image
-		int bottom2 = sprite.getHeight() - Math.abs(sprite2y) - 5; // 5 compensates for white border in image
-		
-		if(bottom1 <= 0)
-			top = 2;
-		else if(bottom2 <= 0)
-			top = 1;
-		
-		if(top == 1) {
-			y += dy * deltaTime;
-			sprite2y = bottom1;
+		if(y <= -sprite.getHeight()){
+			y = sprite.getHeight() - 20;
 		}
-		else {
-			sprite2y += dy * deltaTime;
-			y = bottom2;
+		
+		if(sprite2y <= -sprite.getHeight()){
+			sprite2y = sprite.getHeight() - 20;
 		}
+		
+		
 	}
 	
-	@Override
-	public void draw(Canvas canvas) {
-		float sx = (SCREEN_WIDTH * 1f) / sprite.getWidth();
-		float sy = (SCREEN_HEIGHT * 1f) / sprite.getHeight();
-		
+	
+	public void draw(Canvas canvas){
+		float sx = (screenWidth * 1.0f) / this.sprite.getWidth();
+		float sy = (screenHeight * 1.0f) / this.sprite.getHeight();
 		canvas.scale(sx, sy);
-		canvas.drawBitmap(sprite, x, y, null);
+		canvas.drawBitmap(sprite, x,y, null);
 		canvas.drawBitmap(sprite2, sprite2x, sprite2y, null);
 	}
 	
+	
+
 }

@@ -11,79 +11,107 @@ import android.hardware.SensorManager;
 import android.view.Surface;
 import android.view.WindowManager;
 
+import com.collision.PhysVector;
 import com.example.fallinggametest.Game;
 import com.example.fallinggametest.R;
 
-public class Trooper extends GameObject {
+public class Trooper extends GameObject{
 	
-	/** 
-	 * The default orientation of the screen. Will be any of the values
-	 * in the "See Below" section.
-	 * @see Surface#ROTATION_0
-	 * @see Surface#ROTATION_90
-	 * @see Surface#ROTATION_180
-	 * @see Surface#ROTATION_270
-	 */
+	private PhysVector destination;
+	
+	public final float MAX_SPEED = 600;
+	
 	private int orientation;
 	
-	/** The game that this Trooper will be in */
 	private Game game;
 	
-	/** 
-	 * Creates a new Trooper 
-	 * @param x the x coordinate this Trooper will be at
-	 * @param y the y coordinate this Trooper will be at
-	 * @param game the game that this Trooper will be in
-	 */
-	public Trooper(int x, int y, Game game) {
-		super(game.screenWidth, 0, BitmapFactory.decodeResource(
-				game.getResources(), R.drawable.trooper));
+	public Trooper(float x, float y, Game game) {
 		
+		this.x = x;
+		this.y = y;
 		this.game = game;
 		
-		spawn(x, y, 0, 0);
+		dx = dy = dx2 = dy2 = 0;
 		
-		SensorManager manager = 
-				(SensorManager) game.getSystemService(Context.SENSOR_SERVICE);
+		this.alive = true;
 		
-		manager.registerListener(sensorListener, 
-				manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), 
-				SensorManager.SENSOR_DELAY_GAME);
+		this.sprite = BitmapFactory.decodeResource(game.getResources(), R.drawable.trooper);
+		createHitboxForSprite();
 		
-		WindowManager wm = 
-				(WindowManager) game.getSystemService(Context.WINDOW_SERVICE);
+		SensorManager manager = (SensorManager) game.getSystemService(Context.SENSOR_SERVICE);
+		manager.registerListener(listener, manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_GAME);
 		
+		WindowManager wm = (WindowManager) game.getSystemService(Context.WINDOW_SERVICE);
 		orientation = wm.getDefaultDisplay().getRotation();
 	}
 	
-	/**
-	 * This method will check to see if the trooper collided with any 
-	 * other game object. If it did, then these objects are gracefully 
-	 * destroyed and should trigger the end of the game (since if there 
-	 * was a collision, {@link GameObject#alive alive} will be {@code false})
-	 */
-	@Override
-	public void checkForCollisions(ArrayList<GameObject> gameObjects) {
-		super.checkForCollisions(gameObjects);
+	public void checkForCollisions(ArrayList<GameObject> gameObjects){
 		
-		for(GameObject obj : gameObjects) {
-			if(isColliding(obj)) {
-				if(obj instanceof SkyBackground)
-					alive = true;
-				else
-					alive = false;
-			}
+		for(int i = 0; i < gameObjects.size(); i++){
 			
-			if(alive == false)
-				break;
+			GameObject obj = gameObjects.get(i);
+			
+			if(isColliding(obj)){
+				
+				if(obj instanceof Bird 
+						|| obj instanceof UFO 
+						|| obj instanceof Balloon
+						|| obj instanceof NormalMissile
+						|| obj instanceof HomingMissile ){
+					
+					
+					this.alive = false;
+				}
+			}
 		}
 	}
 	
-	/**
-	 * Allows the trooper to be manipulated via the accelerometer
-	 */
-	public SensorEventListener sensorListener = new SensorEventListener() {
+	public void setDestination(PhysVector dest){
 		
+		this.destination = dest;
+	}
+	
+	@Override
+	public void updatePhysics(float deltaTime){
+		
+		super.updatePhysics(deltaTime);
+		
+		if(destination != null){
+			
+			PhysVector pos = new PhysVector(x, y);
+			float distance = PhysVector.distance(pos, destination);
+			
+			// test if trooper should stop, give it a variance of 3 units
+			if(distance <20){
+				
+				dx = dy = dx2 = dy2 = 0;
+			} else {
+				
+				
+				float speed = MAX_SPEED;
+				PhysVector newVelocity = PhysVector.subtract(destination, pos);
+				newVelocity.becomeUnitVector();
+				
+				newVelocity.scale(speed);
+				
+				dx = newVelocity.x;
+				dy = newVelocity.y;
+			}
+
+            if(x+dx < 0)
+                x = 0;
+            if(x+dx > screenWidth - 48)
+                x = screenWidth - 48;
+		}
+	}
+	 
+	public boolean isAlive(){
+		
+		return this.alive;
+	}
+	
+private SensorEventListener listener = new SensorEventListener() {
+
 		@Override
 		public void onSensorChanged(SensorEvent event) {
 			if(game.useAccelerometer == false)
@@ -101,17 +129,14 @@ public class Trooper extends GameObject {
 				xraw = event.values[1];
 			}
 			
-			double ang = (90 * x) / 9.8;
-			double percentage = ang / 90;
-			
-			xraw *= -1f;
+			double ang = (90 * x) / 9.8;			
+			double percentage = ang / 90.0;
+	
+			xraw *= -1.0;
 			
 			double direction = xraw / x;
 			
-			dx = percentage * MAX_X * direction;
-			
-			if(x == 0)
-				dx = 0; // corrects divide by 0 error when initializing "direction"
+			dx = (float) (percentage * MAX_SPEED * direction * 2);
 		}
 		
 		@Override
@@ -119,5 +144,5 @@ public class Trooper extends GameObject {
 			// Do nothing...
 		}
 	};
-
+	
 }

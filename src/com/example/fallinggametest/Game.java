@@ -3,10 +3,6 @@ package com.example.fallinggametest;
 import java.util.ArrayList;
 import java.util.Random;
 
-import com.gameobjects.GameObject;
-import com.gameobjects.SkyBackground;
-import com.gameobjects.Trooper;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -21,10 +17,10 @@ import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MotionEvent;
-import android.view.Surface;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.View.OnTouchListener;
+
+import com.gameobjects.*;
 
 /**
  * 
@@ -44,6 +40,7 @@ public class Game extends Activity implements OnTouchListener {
 	 */
 	private GameLoop gameLoop;
 	
+	private SpawnHandler spawnHandler;
 	
 	/**
 	 * Determine whether to control Trooper using touch screen or accelerometer
@@ -52,14 +49,11 @@ public class Game extends Activity implements OnTouchListener {
 	
 	public int screenWidth, screenHeight;
 	
-	
 	private ArrayList<GameObject> gameObjects;
-	
 	
 	private Trooper trooper;
 	
-	// TODO
-	// private ScoreLabel scoreLabel;
+	private ScoreLabel scoreLabel;
 	
 	private int currentScore, timeInMillis, timeSinceLastSpawn;
 	
@@ -68,8 +62,6 @@ public class Game extends Activity implements OnTouchListener {
 	public final static String HIGH_SCORE_KEY = "HIGH_SCORE_KEY";
 	
 	private AlertDialog dialog;
-	private boolean paused;
-	
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState){
@@ -120,10 +112,13 @@ public class Game extends Activity implements OnTouchListener {
 		 */
 		addInitialGameObjects();
 		
-		// give gameWorld a touch listener
-		gameWorld.setOnTouchListener(this);	 
+		spawnHandler = new SpawnHandler(this);
 		
-		paused = false;
+		// give gameWorld a touch listener
+		gameWorld.setOnTouchListener(this);
+		
+		
+		 
 	}
 	
 	@Override
@@ -194,14 +189,8 @@ public class Game extends Activity implements OnTouchListener {
 	protected void onResume() {
 		super.onResume();
 		
-		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-		
-		if(paused) {
-			Thread thread = new Thread(gameLoop);
-			thread.start();
-		}
-		else
-			startGameLoop();
+		// create and start the GameLoop Runnable class
+		startGameLoop();
 	}
 	
 	
@@ -223,12 +212,12 @@ public class Game extends Activity implements OnTouchListener {
 			float mid = screenWidth / 2;
 			
 			if(xPos < mid)
-				trooper.dx = trooper.MAX_X * -1;
+				trooper.dx = trooper.MAX_SPEED * -1;
 			else
-				trooper.dx = trooper.MAX_X;
+				trooper.dx = trooper.MAX_SPEED;
 		}
 		else if(event.getAction() == MotionEvent.ACTION_UP)
-			trooper.dx = 0.0f;
+			trooper.dx = 0;
 		else
 			return true; 
 		
@@ -243,7 +232,6 @@ public class Game extends Activity implements OnTouchListener {
 	public void onPause(){
 		super.onPause();
 		gameLoop.stop();
-		paused = true;
 	}
 	
 	public void redrawCanvas(){
@@ -269,11 +257,10 @@ public class Game extends Activity implements OnTouchListener {
 		
 		currentScore += amount;
 		
-//		// TODO
-//		if(scoreLabel != null){
-//			
-//			scoreLabel.setScore(currentScore);
-//		}
+		if(scoreLabel != null){
+			
+			scoreLabel.setScore(currentScore);
+		}
 		
 	}
 	
@@ -303,6 +290,7 @@ public class Game extends Activity implements OnTouchListener {
 	 * @param object to be added
 	 */
 	public void addGameObject(GameObject obj){
+		
 		this.gameObjects.add(obj);
 	}
 	
@@ -317,13 +305,13 @@ public class Game extends Activity implements OnTouchListener {
 				R.drawable.background), screenWidth, screenHeight);
 		addGameObject(background);
 		
-		Trooper trooper = new Trooper(screenHeight / 10 / GameLoop.FPS, screenWidth / 2 / GameLoop.FPS, this);
+		Trooper trooper = new Trooper(350, 300, this);
 		this.trooper = trooper; // store a reference to trooper
 		addGameObject(trooper);
-//		
-//		ScoreLabel label = new ScoreLabel(15,25);
-//		this.scoreLabel = label; // store a reference to scoreLabel
-//		addGameObject(label);
+		
+		ScoreLabel label = new ScoreLabel(15,25);
+		this.scoreLabel = label; // store a reference to scoreLabel
+		addGameObject(label);
 	}
 
 	
@@ -352,6 +340,11 @@ public class Game extends Activity implements OnTouchListener {
 		}
 		
 	}
+	
+	public void lockMissileOnTrooper(HomingMissile missile){
+		
+		missile.setTarget(this.trooper);
+	}
 
 	/** 
 	 * TODO
@@ -361,38 +354,8 @@ public class Game extends Activity implements OnTouchListener {
 	 */
 	public void spawnHandling(){
 		
-		Random rand = new Random();
-		
-		// the amount of time to wait before spawning a new enemy
-		int waitTimeMillis = 1500 + rand.nextInt(1000);
-		
-		if(timeSinceLastSpawn >= waitTimeMillis){
-			
-			// ----- SPAWN BIRD -----
-			
-			//randomly choose whether to spawn on left or on right
-			//depending on time since last spawn
-			boolean leftSpawn = (timeSinceLastSpawn % 2 == 0);
-			
-			int yPos = rand.nextInt(screenHeight);
-//			if(leftSpawn){
-//				Bird b = new Bird(0, yPos, 300, -300, this);
-//				addGameObject(b);
-//			} else {
-//				Bird b = new Bird(screenWidth, yPos, -300, -300, this);
-//				addGameObject(b);
-//			}
-			
-			// ----- SPAWN HOMING MISSILE -----
-			
-			int xPos = rand.nextInt(screenWidth);
-			// TODO
-			//HomingMissile hm = new HomingMissile(xPos, screenHeight, 250, trooper, this);
-			// addGameObject(hm);
-			
-			// after an item is spawned, this should be reset to 0
-			timeSinceLastSpawn = 0;
-		}
+		timeSinceLastSpawn = spawnHandler.spawnGameObject(timeSinceLastSpawn);
+
 	}
 	
 	
@@ -417,8 +380,10 @@ public class Game extends Activity implements OnTouchListener {
 		}
 	}
 	
+	
 	public void checkForStopCondition(){
-		if(trooper.alive == false) {
+		
+		if(trooper.isAlive() == false) {
 			
 			gameLoop.stop();
 			
