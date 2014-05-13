@@ -13,6 +13,9 @@ public class GameLoop implements Runnable {
 	
 	private boolean running;
 	
+	public static final int FPS = 60;
+	public static final int DELAY = 1000 / 60;
+	
 	public GameLoop(Game game, GameWorld gameWorld){
 		
 		this.game = game;
@@ -25,12 +28,11 @@ public class GameLoop implements Runnable {
 				
 		
 		while (running) {
-//			try {				
+			try {				
 				long start = System.currentTimeMillis();
 				
 				// do everything that needs to be done in the game
-				// TODO
-				//game.updatePhysics(GameObject.DELAY / 1000f);
+				game.updatePhysics(DELAY / 1000f);
 				game.doCollisionTesting();
 				game.checkForStopCondition();
 				game.spawnHandling();
@@ -44,16 +46,14 @@ public class GameLoop implements Runnable {
 				long end = System.currentTimeMillis();
 				long diff = end - start;
 				
-				// TODO
-//				if(diff - GameObject.DELAY > 0)
-//					TimeUnit.MILLISECONDS.sleep(GameObject.DELAY - (end - start));
+				if(diff - DELAY > 0)
+					TimeUnit.MILLISECONDS.sleep(DELAY - diff);
 
 				
-				// TODO
-//			} catch (InterruptedException ie) {
-//				running = false;
-//				notifyAll();
-//			}
+			} catch (InterruptedException ie) {
+				running = false;
+				notifyAll();
+			}
 		}
 	}
 	

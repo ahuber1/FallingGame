@@ -25,6 +25,12 @@ public class SkyBackground extends GameObject {
 	/** The y position of the second sprite */
 	protected int sprite2y;
 	
+	/**
+	 * Creates a background of the sky
+	 * @param sprite The sprite that will be used to represent the background
+	 * @param screenWidth The width of the screen this sprite will be displayed on
+	 * @param screenHeight The height of the screen this sprite will be displayed on
+	 */
 	public SkyBackground(Bitmap sprite, int screenWidth, int screenHeight) {
 		super(0, screenHeight / -4, sprite);
 		this.SCREEN_WIDTH = screenWidth;
