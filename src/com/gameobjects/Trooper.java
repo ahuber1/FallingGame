@@ -18,10 +18,6 @@ import com.example.fallinggametest.R;
 
 public class Trooper extends GameObject{
 	
-	private PhysVector destination;
-	
-	public static final float MAX_SPEED = 400;
-	
 	private int orientation;
 	
 	private Game game;
@@ -31,6 +27,7 @@ public class Trooper extends GameObject{
 		this.x = x;
 		this.y = y;
 		this.game = game;
+		this.maxx = Game.screenWidth / 3f;
 		
 		dx = dy = dx2 = dy2 = 0;
 		
@@ -67,46 +64,20 @@ public class Trooper extends GameObject{
 		}
 	}
 	
-	public void setDestination(PhysVector dest){
-		
-		this.destination = dest;
-	}
-	
 	@Override
 	public void updatePhysics(float deltaTime){
 		
 		super.updatePhysics(deltaTime);
 		
-		Log.i("Trooper's updatePhysics()", String.format("%3s = %3.2f", "x", x));
-		Log.i("Trooper's updatePhysics()", String.format("%3s = %3.2f", "y", y));
-		Log.i("Trooper's updatePhysics()", String.format("%3s = %3.2f", "dx", dx));
-		Log.i("Trooper's updatePhysics()", String.format("%3s = %3.2f", "dy", dy));
-		Log.i("Trooper's updatePhysics()", String.format("%3s = %3.2f", "dx2", dx2));
-		Log.i("Trooper's updatePhysics()", String.format("%3s = %3.2f", "dy2", dy2));
-		Log.i("Trooper's updatePhysics()", "--------------------");
+//		Log.i("Trooper's updatePhysics()", String.format("%3s = %3.2f", "x", x));
+//		Log.i("Trooper's updatePhysics()", String.format("%3s = %3.2f", "y", y));
+//		Log.i("Trooper's updatePhysics()", String.format("%3s = %3.2f", "dx", dx));
+//		Log.i("Trooper's updatePhysics()", String.format("%3s = %3.2f", "dy", dy));
+//		Log.i("Trooper's updatePhysics()", String.format("%3s = %3.2f", "dx2", dx2));
+//		Log.i("Trooper's updatePhysics()", String.format("%3s = %3.2f", "dy2", dy2));
+//		Log.i("Trooper's updatePhysics()", "--------------------");
 		
-		if(destination != null){
-			
-			PhysVector pos = new PhysVector(x, y);
-			float distance = PhysVector.distance(pos, destination);
-			
-			// test if trooper should stop, give it a variance of 3 units
-			if(distance <20){
-				
-				dx = dy = dx2 = dy2 = 0;
-			} else {
-				
-				
-				float speed = MAX_SPEED;
-				PhysVector newVelocity = PhysVector.subtract(destination, pos);
-				newVelocity.becomeUnitVector();
-				
-				newVelocity.scale(speed);
-				
-				dx = newVelocity.x;
-				dy = newVelocity.y;
-			}
-		}
+		
 	}
 	 
 	public boolean isAlive(){
@@ -140,7 +111,7 @@ private SensorEventListener listener = new SensorEventListener() {
 			
 			double direction = xraw / x;
 			
-			dx = (float) (percentage * MAX_SPEED * direction * 2);
+			dx = (float) (percentage * maxx * direction);
 			
 			if(x == 0.0)
 				dx = 0;			

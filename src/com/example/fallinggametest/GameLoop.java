@@ -2,6 +2,10 @@ package com.example.fallinggametest;
 
 import java.util.concurrent.TimeUnit;
 
+import com.gameobjects.GameObject;
+
+import android.util.Log;
+
 public class GameLoop implements Runnable {
 
 	/**
@@ -9,7 +13,7 @@ public class GameLoop implements Runnable {
 	 */
 	private Game game;
 	
-	private volatile boolean running;
+	private boolean running;
 	
 	public GameLoop(Game game, GameWorld gameWorld){
 		
@@ -20,17 +24,14 @@ public class GameLoop implements Runnable {
 	@Override
 	public void run() {
 		running = true;
-		
-		
+				
 		
 		while (running) {
-			try {
-				
-				// 1000 / 33 = 30fps
-				TimeUnit.MILLISECONDS.sleep(33);
+			try {				
+				long start = System.currentTimeMillis();
 				
 				// do everything that needs to be done in the game
-				game.updatePhysics(.033f);
+				game.updatePhysics(GameObject.DELAY / 1000f);
 				game.doCollisionTesting();
 				game.checkForStopCondition();
 				game.spawnHandling();
@@ -40,6 +41,12 @@ public class GameLoop implements Runnable {
 				
 				// force a redraw on the screen
 				game.redrawCanvas();
+				
+				long end = System.currentTimeMillis();
+				long diff = end - start;
+				
+				if(diff - GameObject.DELAY > 0)
+					TimeUnit.MILLISECONDS.sleep(GameObject.DELAY - (end - start));
 
 			} catch (InterruptedException ie) {
 				running = false;

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.collision.Hitbox;
 import com.collision.PhysVector;
+import com.example.fallinggametest.Game;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -21,6 +22,16 @@ public abstract class GameObject {
 	protected boolean alive;
 	
 	protected Bitmap sprite;
+	
+	public float maxx, maxy;
+	
+	public static final int FPS = 60;
+	public static final int DELAY = 1000 / 60;
+	
+	public GameObject() {
+		this.screenHeight = Game.screenHeight;
+		this.screenWidth = Game.screenWidth;
+	}
 	
 	public void draw(Canvas canvas){
 		
@@ -103,11 +114,14 @@ public abstract class GameObject {
 		
 		dx += dx2 * deltaTime;
 		dy += dy2 * deltaTime;
+		
+		//dx *= speedFactor;
+		//dy *= speedFactor;
 
 		x += dx * deltaTime;
 		y += dy * deltaTime;
 		
-		if(hitbox != null){
+		if(hitbox != null) {
 			
 			hitbox.setPosition((int)x, (int)y);
 		}

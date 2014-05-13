@@ -222,9 +222,9 @@ public class Game extends Activity implements OnTouchListener {
 			float mid = screenWidth / 2;
 			
 			if(xPos < mid)
-				trooper.setVelocityX(Trooper.MAX_SPEED * -1);
+				trooper.setVelocityX(trooper.maxx * -1);
 			else
-				trooper.setVelocityX(Trooper.MAX_SPEED);
+				trooper.setVelocityX(trooper.maxx);
 		}
 		else if(event.getAction() == MotionEvent.ACTION_UP)
 			trooper.setVelocityX(0.0f);

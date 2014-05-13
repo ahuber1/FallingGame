@@ -12,14 +12,14 @@ public class SkyBackground extends GameObject{
 	private int screenWidth;
 	private int screenHeight;
 
-	public SkyBackground(Bitmap sprite, int screenWidth, int screenHeight){
+	public SkyBackground(Bitmap sprite, int screenWidth, int screenHeight) {
 		
 		x = y = 0;
 		sprite2x = 0;
 		sprite2y = sprite.getHeight();
 		
 		dx = 0;
-		dy = -400;
+		dy = screenHeight / -100f;
 		
 		this.sprite = sprite;
 		this.sprite2 = sprite;
