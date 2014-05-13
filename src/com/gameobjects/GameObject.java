@@ -2,152 +2,163 @@ package com.gameobjects;
 
 import java.util.ArrayList;
 
-import com.collision.Hitbox;
-import com.collision.PhysVector;
-import com.example.fallinggametest.Game;
-
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
+import com.collision.Hitbox;
 
+/**
+ * A basic object that will appear in a 2D game
+ * @author Andrew Huber, Evan Hanger, Mark Judy
+ *
+ */
 public abstract class GameObject {
-
-	/** variables for position, velocity, acceleration */
-	protected float x, y, dx, dy, dx2, dy2;
+	/** The maximum velocity in the x direction */
+	public final int MAX_X;
 	
-	protected int screenHeight, screenWidth;
+	/** The maximum velocity in the y direction */
+	public final int MAX_Y;
 	
-	protected Hitbox hitbox;
+	/** This game object's x position */
+	public int x;
 	
-	protected boolean alive;
+	/** This game object's y position */
+	public int y;
 	
-	protected Bitmap sprite;
+	/** This game object's velocity in the x direction */
+	public double dx;
 	
-	public float maxx, maxy;
+	/** This game object's velocity in the y direction */
+	public double dy;
 	
-	public static final int FPS = 60;
-	public static final int DELAY = 1000 / 60;
+	/** Is this object alive? */
+	public boolean alive;
 	
-	public GameObject() {
-		this.screenHeight = Game.screenHeight;
-		this.screenWidth = Game.screenWidth;
+	/** This object's hitbox; used to check for collisions */
+	public Hitbox hitbox;
+	
+	/** This object's sprite */
+	public Bitmap sprite;
+	
+	/**
+	 * Creates a new game object
+	 * @param maxX maximum velocity in the x direction
+	 * @param maxY maximum velocity in the y direction
+	 * @param sprite the sprite that represents this game object
+	 */
+	public GameObject(int maxX, int maxY, Bitmap sprite) {
+		this.MAX_X = maxX;
+		this.MAX_Y = maxY;
+		this.sprite = sprite;
+		this.alive = false;
 	}
 	
-	public void draw(Canvas canvas){
-		
-		if(sprite != null){
-			
-			canvas.drawBitmap(sprite, x, y, null);
-		}
-	}
-	
-	public void createHitboxForSprite(){
-		
-		if(sprite != null){
-			this.hitbox = new Hitbox((int)x, (int)y, sprite.getWidth(), sprite.getHeight());
-		}
-	}
-	
-	public void setPosition(float x, float y){
-		
+	/**
+	 * Assigns an initial location for this {@code GameObject}
+	 * @param x the x position
+	 * @param y the y position
+	 * @param dx initial velocity in the x direction
+	 * @param dy initial velocity in the y direction
+	 */
+	public void spawn(int x, int y, double dx, double dy) {
 		this.x = x;
 		this.y = y;
-	}
-	
-	public void setVelocityX(float dx){
 		this.dx = dx;
-	}
-	
-	public void setVelocityY(float dy){
 		this.dy = dy;
+		this.hitbox = new Hitbox(x, y, sprite.getWidth(), sprite.getHeight());
+		this.alive = true;
 	}
 	
-	public void setAccelX(float dx2){
-		this.dx2 = dx2;
-	}
-	
-	public void setAccelY(float dy2){
-		this.dy2 = dy2;
-	}
-	
-	public float getXPos(){
+	/**
+	 * Draws a {@link GameObject#sprite} (if there is one) on the provided
+	 * Canvas at position ({@link GameObject#x x}, {@link GameObject#x y}) 
+	 * @param canvas The canvas to draw on
+	 */
+	public void draw(Canvas canvas) {
 		
-		return this.x;
+		if(sprite != null)
+			canvas.drawBitmap(sprite, x, y, null);
+		
 	}
 	
-	public float getYPos(){
+	/**
+	 * Returns the center coordinate of this {@code GameObject} along the
+	 * x axis
+	 * @return the center coordinate of this {@code GameObject} along the
+	 * x axis
+	 */
+	public int getCenterX() {
+		if(alive == false) {
+			throw new IllegalStateException("You must spawn this object before "
+					+ "you can find where it is.");
+		}
 		
-		return this.y;
+		return x + sprite.getWidth() / 2;
 	}
 	
-	public float getVelocityX(){
+	/**
+	 * Returns the center coordinate of this {@code GameObject} along the
+	 * y axis
+	 * @return the center coordinate of this {@code GameObject} along the
+	 * y axis
+	 */
+	public int getCenterY() {
+		if(alive == false) {
+			throw new IllegalStateException("You must spawn this object before "
+					+ "you can find where it is.");
+		}
 		
-		return this.dx;
+		return x + sprite.getHeight() / 2;
 	}
 	
-	public float getVelocityY(){
+	/**
+	 * Updates the velocity and position of this game object at a particular time
+	 * @param deltaTime The amount of time that has passed since either spawning or
+	 * since the last time this method was called
+	 */
+	public void updatePhysics(double deltaTime) {
 		
-		return this.dy;
-	}
-	
-	public float getAccelX(){
+		if(alive == false) {
+			throw new IllegalStateException("You must spawn this object before "
+					+ "you can upadte a game object's position");
+		}
 		
-		return this.dx2;
-	}
-	
-	public float getAccelY(){
-		
-		return this.dy2;
-	}
-	
-	public float getCenterX(){
-		
-		return x + sprite.getWidth()/2;
-	}
-	
-	public float getCenterY(){
-		
-		return y + sprite.getHeight()/2;
-	}
-	
-	public void updatePhysics(float deltaTime){
-		
-		dx += dx2 * deltaTime;
-		dy += dy2 * deltaTime;
-		
-		//dx *= speedFactor;
-		//dy *= speedFactor;
-
 		x += dx * deltaTime;
 		y += dy * deltaTime;
+		hitbox.setPosition(getCenterX(), getCenterY());		
+	}
+	
+	/**
+	 * <b>For now, this method only checks if it is possible to check for collisions
+	 * (i.e. if this game object has been spawned). You need to provide your own
+	 * implementation of this in order for this to work properly.</b><br><br>
+	 * This method will check to see if this game object is colliding with any other
+	 * game object. If it is, then these colliding objects are gracefully destroyed.
+	 * @param gameObjects The other objects to check for collisions
+	 */
+	public void checkForCollisions(ArrayList<GameObject> gameObjects) {
 		
-		if(hitbox != null) {
-			
-			hitbox.setPosition((int)x, (int)y);
+		if(alive == false) {
+			throw new IllegalStateException("You must spawn this object before "
+					+ "you can check for collisions");
 		}
 		
-		
 	}
 	
-	public void setSprite(Bitmap bmp){
-		
-		this.sprite = bmp;
-	}
-	
-	public void checkForCollisions(ArrayList<GameObject> gameObjects){
-		// do nothing unless overwritten
-	}
-		
 	// TODO
-	public boolean isColliding(GameObject other){
-	
-		if(this.hitbox != null && other.hitbox != null){
-			return this.hitbox.isColliding(other.hitbox);
-		} else {
-			return false;
-		}
-	}
+	/**
+	 * Is this game object colliding with another game object?
+	 * @param other The other game object
+	 * @return {@code true} if this game object is colliding with the other game object,
+	 * {@code false} otherwise
+	 */
+	public boolean isColliding(GameObject other) {
 		
-	
-	
+		if(alive == false) {
+			throw new IllegalStateException("You must spawn this object before "
+					+ "you can check for collisions");
+		}
+		
+		return this.hitbox.isColliding(other.hitbox);		
+	}
 }

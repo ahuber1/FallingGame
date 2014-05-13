@@ -21,13 +21,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.View.OnTouchListener;
 
-import com.gameobjects.Bird;
-import com.gameobjects.GameObject;
-import com.gameobjects.HomingMissile;
-import com.gameobjects.ScoreLabel;
-import com.gameobjects.SkyBackground;
-import com.gameobjects.Trooper;
-
 /**
  * 
  * This is the class which handles all the main functions of the game. 
@@ -54,11 +47,14 @@ public class Game extends Activity implements OnTouchListener {
 	
 	public static int screenWidth, screenHeight;
 	
-	private ArrayList<GameObject> gameObjects;
+	// TODO
+	// private ArrayList<GameObject> gameObjects;
 	
-	private Trooper trooper;
+	// TODO
+	// private Trooper trooper;
 	
-	private ScoreLabel scoreLabel;
+	// TODO
+	// private ScoreLabel scoreLabel;
 	
 	private int currentScore, timeInMillis, timeSinceLastSpawn;
 	
@@ -105,11 +101,13 @@ public class Game extends Activity implements OnTouchListener {
 		this.timeInMillis = 0;
 		this.timeSinceLastSpawn = 0;
 		
+		// TODO
 		// create ArrayList of GameObjects
-		this.gameObjects = new ArrayList<GameObject>();
+		// this.gameObjects = new ArrayList<GameObject>();
 		
+		// TODO
 		// create the GameWorld and make it the main view
-		gameWorld = new GameWorld(this, gameObjects);
+		//gameWorld = new GameWorld(this, gameObjects);
 		setContentView(gameWorld);
 		
 		/* Add the initial game objects which are always going to be present:
@@ -221,13 +219,15 @@ public class Game extends Activity implements OnTouchListener {
 			float xPos = event.getX();
 			float mid = screenWidth / 2;
 			
-			if(xPos < mid)
-				trooper.setVelocityX(trooper.maxx * -1);
-			else
-				trooper.setVelocityX(trooper.maxx);
+			// TODO
+//			if(xPos < mid)
+//				trooper.setVelocityX(trooper.maxx * -1);
+//			else
+//				trooper.setVelocityX(trooper.maxx);
 		}
 		else if(event.getAction() == MotionEvent.ACTION_UP)
-			trooper.setVelocityX(0.0f);
+			// TODO
+			/* trooper.setVelocityX(0.0f) */;
 		else
 			return true; 
 		
@@ -268,10 +268,11 @@ public class Game extends Activity implements OnTouchListener {
 		
 		currentScore += amount;
 		
-		if(scoreLabel != null){
-			
-			scoreLabel.setScore(currentScore);
-		}
+//		// TODO
+//		if(scoreLabel != null){
+//			
+//			scoreLabel.setScore(currentScore);
+//		}
 		
 	}
 	
@@ -300,10 +301,11 @@ public class Game extends Activity implements OnTouchListener {
 	 * Adds a GameObject to the ArrayList containing GameObjects
 	 * @param object to be added
 	 */
-	public void addGameObject(GameObject obj){
-		
-		this.gameObjects.add(obj);
-	}
+//	TODO
+//	public void addGameObject(GameObject obj){
+//		// TODO
+//		// this.gameObjects.add(obj);
+//	}
 	
 	/**
 	 * This is where you add the GameObjects that are initially present in the game
@@ -312,17 +314,18 @@ public class Game extends Activity implements OnTouchListener {
 	 */
 	public void addInitialGameObjects(){
 		
-		SkyBackground background = new SkyBackground(BitmapFactory.decodeResource(getResources(), 
-				R.drawable.background), screenWidth, screenHeight);
-		addGameObject(background);
-		
-		Trooper trooper = new Trooper(350, 300, this);
-		this.trooper = trooper; // store a reference to trooper
-		addGameObject(trooper);
-		
-		ScoreLabel label = new ScoreLabel(15,25);
-		this.scoreLabel = label; // store a reference to scoreLabel
-		addGameObject(label);
+//		TODO
+//		SkyBackground background = new SkyBackground(BitmapFactory.decodeResource(getResources(), 
+//				R.drawable.background), screenWidth, screenHeight);
+//		addGameObject(background);
+//		
+//		Trooper trooper = new Trooper(350, 300, this);
+//		this.trooper = trooper; // store a reference to trooper
+//		addGameObject(trooper);
+//		
+//		ScoreLabel label = new ScoreLabel(15,25);
+//		this.scoreLabel = label; // store a reference to scoreLabel
+//		addGameObject(label);
 	}
 
 	
@@ -332,10 +335,11 @@ public class Game extends Activity implements OnTouchListener {
 	 */
 	public void doCollisionTesting(){
 		
-		for(int i = 0; i < gameObjects.size(); i++){
-			
-			gameObjects.get(i).checkForCollisions(gameObjects);
-		}
+		// TODO
+//		for(int i = 0; i < gameObjects.size(); i++){
+//			
+//			gameObjects.get(i).checkForCollisions(gameObjects);
+//		}
 	}
 	
 	/**
@@ -345,10 +349,11 @@ public class Game extends Activity implements OnTouchListener {
 	 */
 	public void updatePhysics(float deltaTime){
 		
-		for(int i = 0; i < gameObjects.size(); i++){
-			
-			gameObjects.get(i).updatePhysics(deltaTime);
-		}
+		// TODO
+//		for(int i = 0; i < gameObjects.size(); i++){
+//			
+//			gameObjects.get(i).updatePhysics(deltaTime);
+//		}
 		
 	}
 
@@ -374,20 +379,21 @@ public class Game extends Activity implements OnTouchListener {
 			boolean leftSpawn = (timeSinceLastSpawn % 2 == 0);
 			
 			int yPos = rand.nextInt(screenHeight);
-			
-			if(leftSpawn){
-				Bird b = new Bird(0, yPos, 300, -300, this);
-				addGameObject(b);
-			} else {
-				Bird b = new Bird(screenWidth, yPos, -300, -300, this);
-				addGameObject(b);
-			}
+//			TODO
+//			if(leftSpawn){
+//				Bird b = new Bird(0, yPos, 300, -300, this);
+//				addGameObject(b);
+//			} else {
+//				Bird b = new Bird(screenWidth, yPos, -300, -300, this);
+//				addGameObject(b);
+//			}
 			
 			// ----- SPAWN HOMING MISSILE -----
 			
 			int xPos = rand.nextInt(screenWidth);
-			HomingMissile hm = new HomingMissile(xPos, screenHeight, 250, trooper, this);
-			addGameObject(hm);
+			// TODO
+			//HomingMissile hm = new HomingMissile(xPos, screenHeight, 250, trooper, this);
+			// addGameObject(hm);
 			
 			// after an item is spawned, this should be reset to 0
 			timeSinceLastSpawn = 0;
@@ -401,75 +407,78 @@ public class Game extends Activity implements OnTouchListener {
 	public void removeDeadGameObjects(){
 		
 		// start iterating at i=3, to avoid trooper, skyBackground, scoreLabel
-		for(int i = 3; i < gameObjects.size(); i++){
+		//for(int i = 3; i < gameObjects.size(); i++){
 			
-			GameObject temp = gameObjects.get(i);
+			// TODO
+			//GameObject temp = gameObjects.get(i);
 			
+			// TODO
 			// if an object goes off the screen, remove it from ArrayList
-			if(temp.getXPos() < 0 
-					|| temp.getXPos() > screenWidth
-					|| temp.getYPos() < 0 
-					|| temp.getYPos() > screenHeight){
-				
-				gameObjects.remove(temp);
-			}
-		}
+//			if(temp.getXPos() < 0 
+//					|| temp.getXPos() > screenWidth
+//					|| temp.getYPos() < 0 
+//					|| temp.getYPos() > screenHeight){
+//				
+//				gameObjects.remove(temp);
+//			}
+//		}
 	}
 	
 	public void checkForStopCondition(){
 		
-		if(trooper.isAlive() == false) {
-			
-			gameLoop.stop();
-			
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			View view;
-			
-			if(currentScore > getSharedPreferences(SHARED_PREFERENCES_KEY, 
-					Context.MODE_PRIVATE).getInt(HIGH_SCORE_KEY, 0)) {
-				view = getLayoutInflater().inflate(R.layout.high_score, null);
-				builder.setTitle("Congratulations!");
-				
-				SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_KEY, 
-						Context.MODE_PRIVATE);
-				Editor editor = preferences.edit();
-				
-				if(preferences.contains(HIGH_SCORE_KEY))
-					editor.remove(HIGH_SCORE_KEY);
-				
-				editor.putInt(HIGH_SCORE_KEY, currentScore);
-				editor.commit();				
-			}
-			else {
-				view = getLayoutInflater().inflate(R.layout.game_over, null);
-				builder.setTitle("You crashed!");
-			}
-			
-			
-			builder.setView(view);
-			builder.setPositiveButton("Play Again?", new OnClickListener() {
-				
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					// Restart the game
-					gameWorld = new GameWorld(Game.this, gameObjects);
-					gameLoop = new GameLoop(Game.this, gameWorld);
-					
-					Thread thread = new Thread(gameLoop);
-					thread.start();
-				}
-			});
-			
-			builder.setNegativeButton("Return to Main Menu", new OnClickListener() {
-				
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					// Return to main menu
-				}
-			});
-			
-			builder.setCancelable(false); // Cannot tap outside the dialog to cancel it
-			builder.show();
-		}
+		// TODO
+//		if(trooper.isAlive() == false) {
+//			
+//			gameLoop.stop();
+//			
+//			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//			View view;
+//			
+//			if(currentScore > getSharedPreferences(SHARED_PREFERENCES_KEY, 
+//					Context.MODE_PRIVATE).getInt(HIGH_SCORE_KEY, 0)) {
+//				view = getLayoutInflater().inflate(R.layout.high_score, null);
+//				builder.setTitle("Congratulations!");
+//				
+//				SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_KEY, 
+//						Context.MODE_PRIVATE);
+//				Editor editor = preferences.edit();
+//				
+//				if(preferences.contains(HIGH_SCORE_KEY))
+//					editor.remove(HIGH_SCORE_KEY);
+//				
+//				editor.putInt(HIGH_SCORE_KEY, currentScore);
+//				editor.commit();				
+//			}
+//			else {
+//				view = getLayoutInflater().inflate(R.layout.game_over, null);
+//				builder.setTitle("You crashed!");
+//			}
+//			
+//			
+//			builder.setView(view);
+//			builder.setPositiveButton("Play Again?", new OnClickListener() {
+//				
+//				@Override
+//				public void onClick(DialogInterface dialog, int which) {
+//					// Restart the game
+//					gameWorld = new GameWorld(Game.this, gameObjects);
+//					gameLoop = new GameLoop(Game.this, gameWorld);
+//					
+//					Thread thread = new Thread(gameLoop);
+//					thread.start();
+//				}
+//			});
+//			
+//			builder.setNegativeButton("Return to Main Menu", new OnClickListener() {
+//				
+//				@Override
+//				public void onClick(DialogInterface dialog, int which) {
+//					// Return to main menu
+//				}
+//			});
+//			
+//			builder.setCancelable(false); // Cannot tap outside the dialog to cancel it
+//			builder.show();
+//		}
 	}
 }
