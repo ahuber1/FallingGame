@@ -41,7 +41,9 @@ public abstract class GameObject {
 	protected Bitmap sprite;
 	
 	/**
-	 * Creates a new game object
+	 * Creates a new game object. Note that the game object is not alive yet.
+	 * You have to call {@link GameObject#spawn(int, int, double, double)} in 
+	 * order to do that.
 	 * @param maxX maximum velocity in the x direction
 	 * @param maxY maximum velocity in the y direction
 	 * @param sprite the sprite that represents this game object
@@ -54,7 +56,8 @@ public abstract class GameObject {
 	}
 	
 	/**
-	 * Assigns an initial location for this {@code GameObject}
+	 * Assigns an initial location, velocity, and hitbox for this {@code GameObject}
+	 * and sets this game object as alive.
 	 * @param x the x position
 	 * @param y the y position
 	 * @param dx initial velocity in the x direction

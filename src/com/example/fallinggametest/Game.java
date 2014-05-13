@@ -45,7 +45,7 @@ public class Game extends Activity implements OnTouchListener {
 	 */
 	public boolean useAccelerometer;
 	
-	public static int screenWidth, screenHeight;
+	public int screenWidth, screenHeight;
 	
 	// TODO
 	// private ArrayList<GameObject> gameObjects;
