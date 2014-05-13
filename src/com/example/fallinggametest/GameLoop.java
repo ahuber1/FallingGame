@@ -2,16 +2,14 @@ package com.example.fallinggametest;
 
 import java.util.concurrent.TimeUnit;
 
-public class GameLoop extends Thread {
+public class GameLoop implements Runnable {
 
 	/**
 	 * references to Game 
 	 */
 	private Game game;
 	
-	private volatile boolean running = true;
-	
-	
+	private volatile boolean running;
 	
 	public GameLoop(Game game, GameWorld gameWorld){
 		
@@ -19,8 +17,10 @@ public class GameLoop extends Thread {
 	}
 	
 	
-	
+	@Override
 	public void run() {
+		running = true;
+		
 		while (running) {
 			try {
 				
@@ -41,13 +41,13 @@ public class GameLoop extends Thread {
 
 			} catch (InterruptedException ie) {
 				running = false;
+				notifyAll();
 			}
 		}
 	}
 	
-	public void safeStop() {
+	public void stop() {
 		running = false;
-		interrupt();
 	}
 	
 	public boolean isRunning(){

@@ -3,21 +3,29 @@ package com.example.fallinggametest;
 import java.util.ArrayList;
 import java.util.Random;
 
-import com.collision.PhysVector;
-import com.gameobjects.*;
-
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
+import android.content.DialogInterface.OnCancelListener;
+import android.content.DialogInterface.OnClickListener;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.BitmapFactory;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MotionEvent;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnTouchListener;
+
+import com.gameobjects.Bird;
+import com.gameobjects.GameObject;
+import com.gameobjects.HomingMissile;
+import com.gameobjects.ScoreLabel;
+import com.gameobjects.SkyBackground;
+import com.gameobjects.Trooper;
 
 /**
  * 
@@ -41,7 +49,7 @@ public class Game extends Activity implements OnTouchListener {
 	/**
 	 * Determine whether to control Trooper using touch screen or accelerometer
 	 */
-	private boolean useAccelerometer, useTouchscreen;
+	public boolean useAccelerometer;
 	
 	public static int screenWidth, screenHeight;
 	
@@ -51,9 +59,13 @@ public class Game extends Activity implements OnTouchListener {
 	
 	private ScoreLabel scoreLabel;
 	
-	private SkyBackground skyBackground;
-	
 	private int currentScore, timeInMillis, timeSinceLastSpawn;
+	
+	public final static String USE_ACCELEROMETER_KEY = "USE_ACCELEROMETER";
+	public final static String SHARED_PREFERENCES_KEY = "SHARED_PREFERENCES_KEY";
+	public final static String HIGH_SCORE_KEY = "HIGH_SCORE_KEY";
+	
+	private AlertDialog dialog;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState){
@@ -67,15 +79,22 @@ public class Game extends Activity implements OnTouchListener {
 		screenWidth = displaymetrics.widthPixels;
 		
 		// both default to false but will be changed in the code below
-		useAccelerometer = useTouchscreen = false;
+		useAccelerometer = true;
 		
 		// determine what controls to use for Trooper, 
 		// this info is passed from MainMenu
-		Bundle userControlInfo = getIntent().getExtras();
-		if(userControlInfo != null){
-			useAccelerometer = userControlInfo.getBoolean("useAccel");
-			useTouchscreen = userControlInfo.getBoolean("useTouch");
+		
+		
+		SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
+		Editor editor = preferences.edit();
+		
+		if(!preferences.contains(USE_ACCELEROMETER_KEY)) {
+			editor.putBoolean(USE_ACCELEROMETER_KEY, true);
+			editor.commit();
 		}
+		
+		useAccelerometer = preferences.getBoolean(USE_ACCELEROMETER_KEY, true);
+		
 		
 		// start these variables at 0
 		this.currentScore = 0;
@@ -104,8 +123,78 @@ public class Game extends Activity implements OnTouchListener {
 	}
 	
 	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.falling_menu, menu);
+		return true;
+	}
+	
+	@Override
+	public boolean onMenuOpened(int featureId, Menu menu) {
+		closeOptionsMenu();		
+		gameLoop.stop();
+		
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Paused");
+		
+		OnClickListener listener = new OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface d, int which) {
+				
+				if(which == 0) {
+					useAccelerometer = !useAccelerometer;
+					
+					// TODO use shared preferences
+					
+					if(getIntent() != null)
+						getIntent().putExtra(USE_ACCELEROMETER_KEY, useAccelerometer);
+					
+					SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
+					Editor editor = preferences.edit();
+					editor.remove(USE_ACCELEROMETER_KEY);
+					editor.putBoolean(USE_ACCELEROMETER_KEY, useAccelerometer);
+					editor.commit();
+				}
+				
+				Thread thread = new Thread(gameLoop);
+				thread.start();
+				dialog.cancel();
+				dialog.dismiss();
+			}
+		};
+		
+		builder.setOnCancelListener(new OnCancelListener() {
+			
+			@Override
+			public void onCancel(DialogInterface dialog) {
+				Thread thread = new Thread(gameLoop);
+				thread.start();
+				dialog.cancel();
+				dialog.dismiss();				
+			}
+		});
+		
+		if(useAccelerometer)
+			builder.setItems(R.array.dialog_options_accel_enabled, listener);
+		else
+			builder.setItems(R.array.dialog_options_accel_disabled, listener);
+		
+		dialog = builder.create();
+		dialog.show();
+		return true;
+	}
+	
+	@Override
+	public void onBackPressed() {
+		// Do nothing...
+	}
+	
+	@Override
 	protected void onResume() {
 		super.onResume();
+		
 		// create and start the GameLoop Runnable class
 		startGameLoop();
 	}
@@ -116,6 +205,14 @@ public class Game extends Activity implements OnTouchListener {
 	 */
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
+		if(gameLoop.isRunning() == false) {
+			Thread thread = new Thread(gameLoop);
+			thread.start();
+		}
+		
+		if(useAccelerometer == true)
+			return true;
+		
 		if(event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_MOVE) {
 			float xPos = event.getX();
 			float mid = screenWidth / 2;
@@ -140,10 +237,7 @@ public class Game extends Activity implements OnTouchListener {
 	@Override
 	public void onPause(){
 		super.onPause();
-		
-		// stop the gameLoop, end the game activity
-		gameLoop.safeStop();
-		
+		gameLoop.stop();
 	}
 	
 	public void redrawCanvas(){
@@ -193,8 +287,8 @@ public class Game extends Activity implements OnTouchListener {
 	public void startGameLoop(){
 		
 		this.gameLoop = new GameLoop(this, this.gameWorld);
-		this.gameLoop.start();
-		
+		Thread thread = new Thread(gameLoop);
+		thread.start();		
 	}
 	
 	/**
@@ -215,18 +309,15 @@ public class Game extends Activity implements OnTouchListener {
 		
 		SkyBackground background = new SkyBackground(BitmapFactory.decodeResource(getResources(), 
 				R.drawable.background), screenWidth, screenHeight);
-		this.skyBackground = background; // store a reference to skyBackground
 		addGameObject(background);
 		
-		Trooper trooper = new Trooper(350, 300, this, useAccelerometer);
+		Trooper trooper = new Trooper(350, 300, this);
 		this.trooper = trooper; // store a reference to trooper
 		addGameObject(trooper);
 		
 		ScoreLabel label = new ScoreLabel(15,25);
 		this.scoreLabel = label; // store a reference to scoreLabel
 		addGameObject(label);
-		
-	
 	}
 
 	
@@ -322,13 +413,37 @@ public class Game extends Activity implements OnTouchListener {
 	
 	public void checkForStopCondition(){
 		
-		if(trooper.isAlive() == false){
+		if(trooper.isAlive() == false) {
 			
-			// end the game, stop the gameLoop, start the GameOver Activity
+			gameLoop.stop();
+			
+			if(currentScore > getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE).getInt(HIGH_SCORE_KEY, 0)) {
+				
+			}
+			else {
+				AlertDialog.Builder builder = new AlertDialog.Builder(this);
+				View view = getLayoutInflater().inflate(R.layout.game_over, null);
+				builder.setView(view);
+				
+				builder.setPositiveButton("Play Again?", new OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// Play again
+					}
+				});
+				
+				builder.setNegativeButton("Return to Main Menu", new OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// Return to main menu
+					}
+				});
+				
+				builder.setCancelable(false); // Cannot tap outside the dialog to cancel it
+				builder.show();
+			}
 		}
 	}
-		
-	
-		
-	
 }

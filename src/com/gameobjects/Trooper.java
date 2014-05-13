@@ -2,11 +2,7 @@ package com.gameobjects;
 
 import java.util.ArrayList;
 
-import com.collision.PhysVector;
-import com.example.fallinggametest.R;
-
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -15,31 +11,37 @@ import android.hardware.SensorManager;
 import android.view.Surface;
 import android.view.WindowManager;
 
+import com.collision.PhysVector;
+import com.example.fallinggametest.Game;
+import com.example.fallinggametest.R;
+
 public class Trooper extends GameObject{
 	
 	private PhysVector destination;
 	
-	public static final float MAX_SPEED = 200;
+	public static final float MAX_SPEED = 400;
 	
 	private int orientation;
-	private boolean useAccelerometer;
 	
-	public Trooper(float x, float y, Context context, boolean useAccelerometer) {
+	private Game game;
+	
+	public Trooper(float x, float y, Game game) {
 		
 		this.x = x;
 		this.y = y;
+		this.game = game;
 		
 		dx = dy = dx2 = dy2 = 0;
 		
 		this.alive = true;
 		
-		this.sprite = BitmapFactory.decodeResource(context.getResources(), R.drawable.trooper);
+		this.sprite = BitmapFactory.decodeResource(game.getResources(), R.drawable.trooper);
 		createHitboxForSprite();
 		
-		SensorManager manager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+		SensorManager manager = (SensorManager) game.getSystemService(Context.SENSOR_SERVICE);
 		manager.registerListener(listener, manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_GAME);
 		
-		WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+		WindowManager wm = (WindowManager) game.getSystemService(Context.WINDOW_SERVICE);
 		orientation = wm.getDefaultDisplay().getRotation();
 	}
 	
@@ -107,7 +109,7 @@ private SensorEventListener listener = new SensorEventListener() {
 
 		@Override
 		public void onSensorChanged(SensorEvent event) {
-			if(!useAccelerometer)
+			if(game.useAccelerometer == false)
 				return;
 			
 			double x = Math.abs(event.values[0]);
@@ -129,7 +131,7 @@ private SensorEventListener listener = new SensorEventListener() {
 			
 			double direction = xraw / x;
 			
-			dx = (float) (percentage * MAX_SPEED * direction);
+			dx = (float) (percentage * MAX_SPEED * direction * 2);
 		}
 		
 		@Override
