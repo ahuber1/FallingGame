@@ -35,10 +35,10 @@ public abstract class GameObject {
 	public boolean alive;
 	
 	/** This object's hitbox; used to check for collisions */
-	public Hitbox hitbox;
+	protected Hitbox hitbox;
 	
 	/** This object's sprite */
-	public Bitmap sprite;
+	protected Bitmap sprite;
 	
 	/**
 	 * Creates a new game object
