@@ -1,7 +1,10 @@
 package com.gameobjects;
 
+import com.example.fallinggametest.GameLoop;
+
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.util.Log;
 
 public class SkyBackground extends GameObject {
 	
@@ -32,31 +35,41 @@ public class SkyBackground extends GameObject {
 	 * @param screenHeight The height of the screen this sprite will be displayed on
 	 */
 	public SkyBackground(Bitmap sprite, int screenWidth, int screenHeight) {
-		super(0, screenHeight / -4, sprite);
+		super(0, screenHeight / -5, sprite);
+		
+		Log.i("SkyBackground", "" + screenHeight);
+		Log.i("SkyBackground", "" + sprite.getHeight());
+		
 		this.SCREEN_WIDTH = screenWidth;
 		this.SCREEN_HEIGHT = screenHeight;
 		this.sprite2 = sprite;
 		this.sprite2x = 0;
-		this.sprite2y = sprite.getHeight();
+		this.sprite2y = sprite2.getHeight();
 		spawn(0, 0, 0, MAX_Y);
 	}
+	
+	int first = 0;
 	
 	
 	@Override
 	public void updatePhysics(double deltaTime) {
-		x += dx * deltaTime;
-		x += dy * deltaTime;
+		int bottom = y - sprite.getHeight();
 		
-		sprite2x += dx * deltaTime;
-		sprite2y += dy * deltaTime;
+		int f = first;
 		
-		if(y <= -sprite.getHeight()) {
-			y = sprite.getHeight();
+		if(bottom < 0) {
+			y += dy * deltaTime;
+			sprite2y = y - sprite.getHeight();
+			first = 1;
+		}
+		else {
+			sprite2y += dy * deltaTime;
+			y = sprite2y - sprite.getHeight();
+			first = 2;
 		}
 		
-		if(sprite2y <= -sprite.getHeight()) {
-			sprite2y = sprite.getHeight();
-		}
+		if(first != f)
+			Log.i("first", "" + first);
 	}
 	
 	@Override

@@ -14,7 +14,7 @@ public class GameLoop implements Runnable {
 	private boolean running;
 	
 	public static final int FPS = 60;
-	public static final int DELAY = 1000 / 60;
+	public static final int DELAY = 1000 / FPS;
 	
 	public GameLoop(Game game, GameWorld gameWorld){
 		
@@ -28,11 +28,9 @@ public class GameLoop implements Runnable {
 				
 		
 		while (running) {
-			try {				
-				long start = System.currentTimeMillis();
-				
+			try {								
 				// do everything that needs to be done in the game
-				game.updatePhysics(DELAY / 1000f);
+				game.updatePhysics(1f / FPS);
 				game.doCollisionTesting();
 				game.checkForStopCondition();
 				game.spawnHandling();
@@ -43,13 +41,7 @@ public class GameLoop implements Runnable {
 				// force a redraw on the screen
 				game.redrawCanvas();
 				
-				long end = System.currentTimeMillis();
-				long diff = end - start;
-				
-				if(diff - DELAY > 0)
-					TimeUnit.MILLISECONDS.sleep(DELAY - diff);
-
-				
+				TimeUnit.MILLISECONDS.sleep(DELAY);
 			} catch (InterruptedException ie) {
 				running = false;
 				notifyAll();

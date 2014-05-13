@@ -21,6 +21,7 @@ import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MotionEvent;
+import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.View.OnTouchListener;
@@ -316,7 +317,7 @@ public class Game extends Activity implements OnTouchListener {
 				R.drawable.background), screenWidth, screenHeight);
 		addGameObject(background);
 		
-		Trooper trooper = new Trooper(screenHeight / 10, screenWidth / 2, this);
+		Trooper trooper = new Trooper(screenHeight / 10 / GameLoop.FPS, screenWidth / 2 / GameLoop.FPS, this);
 		this.trooper = trooper; // store a reference to trooper
 		addGameObject(trooper);
 //		
