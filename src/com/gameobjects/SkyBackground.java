@@ -35,7 +35,7 @@ public class SkyBackground extends GameObject {
 	 * @param screenHeight The height of the screen this sprite will be displayed on
 	 */
 	public SkyBackground(Bitmap sprite, int screenWidth, int screenHeight) {
-		super(0, screenHeight / -5, sprite);
+		super(0, screenHeight / -4, sprite);
 		
 		Log.i("SkyBackground", "" + screenHeight);
 		Log.i("SkyBackground", "" + sprite.getHeight());
@@ -48,28 +48,26 @@ public class SkyBackground extends GameObject {
 		spawn(0, 0, 0, MAX_Y);
 	}
 	
-	int first = 0;
-	
-	
+	private byte top = 1;
+		
 	@Override
 	public void updatePhysics(double deltaTime) {
-		int bottom = y - sprite.getHeight();
+		int bottom1 = sprite.getHeight() - Math.abs(y) - 5; // 5 compensates for white border in image
+		int bottom2 = sprite.getHeight() - Math.abs(sprite2y) - 5; // 5 compensates for white border in image
 		
-		int f = first;
+		if(bottom1 <= 0)
+			top = 2;
+		else if(bottom2 <= 0)
+			top = 1;
 		
-		if(bottom < 0) {
+		if(top == 1) {
 			y += dy * deltaTime;
-			sprite2y = y - sprite.getHeight();
-			first = 1;
+			sprite2y = bottom1;
 		}
 		else {
 			sprite2y += dy * deltaTime;
-			y = sprite2y - sprite.getHeight();
-			first = 2;
+			y = bottom2;
 		}
-		
-		if(first != f)
-			Log.i("first", "" + first);
 	}
 	
 	@Override

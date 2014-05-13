@@ -36,7 +36,7 @@ public class Trooper extends GameObject {
 	 * @param game the game that this Trooper will be in
 	 */
 	public Trooper(int x, int y, Game game) {
-		super(game.screenWidth / 2, 0, BitmapFactory.decodeResource(
+		super(game.screenWidth, 0, BitmapFactory.decodeResource(
 				game.getResources(), R.drawable.trooper));
 		
 		this.game = game;
