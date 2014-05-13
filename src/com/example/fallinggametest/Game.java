@@ -85,7 +85,8 @@ public class Game extends Activity implements OnTouchListener {
 		// this info is passed from MainMenu
 		
 		
-		SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
+		SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_KEY, 
+				Context.MODE_PRIVATE);
 		Editor editor = preferences.edit();
 		
 		if(!preferences.contains(USE_ACCELEROMETER_KEY)) {
@@ -145,11 +146,6 @@ public class Game extends Activity implements OnTouchListener {
 				
 				if(which == 0) {
 					useAccelerometer = !useAccelerometer;
-					
-					// TODO use shared preferences
-					
-					if(getIntent() != null)
-						getIntent().putExtra(USE_ACCELEROMETER_KEY, useAccelerometer);
 					
 					SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
 					Editor editor = preferences.edit();
@@ -417,33 +413,54 @@ public class Game extends Activity implements OnTouchListener {
 			
 			gameLoop.stop();
 			
-			if(currentScore > getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE).getInt(HIGH_SCORE_KEY, 0)) {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			View view;
+			
+			if(currentScore > getSharedPreferences(SHARED_PREFERENCES_KEY, 
+					Context.MODE_PRIVATE).getInt(HIGH_SCORE_KEY, 0)) {
+				view = getLayoutInflater().inflate(R.layout.high_score, null);
+				builder.setTitle("Congratulations!");
 				
+				SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_KEY, 
+						Context.MODE_PRIVATE);
+				Editor editor = preferences.edit();
+				
+				if(preferences.contains(HIGH_SCORE_KEY))
+					editor.remove(HIGH_SCORE_KEY);
+				
+				editor.putInt(HIGH_SCORE_KEY, currentScore);
+				editor.commit();				
 			}
 			else {
-				AlertDialog.Builder builder = new AlertDialog.Builder(this);
-				View view = getLayoutInflater().inflate(R.layout.game_over, null);
-				builder.setView(view);
-				
-				builder.setPositiveButton("Play Again?", new OnClickListener() {
-					
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						// Play again
-					}
-				});
-				
-				builder.setNegativeButton("Return to Main Menu", new OnClickListener() {
-					
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						// Return to main menu
-					}
-				});
-				
-				builder.setCancelable(false); // Cannot tap outside the dialog to cancel it
-				builder.show();
+				view = getLayoutInflater().inflate(R.layout.game_over, null);
+				builder.setTitle("You crashed!");
 			}
+			
+			
+			builder.setView(view);
+			builder.setPositiveButton("Play Again?", new OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					// Restart the game
+					gameWorld = new GameWorld(Game.this, gameObjects);
+					gameLoop = new GameLoop(Game.this, gameWorld);
+					
+					Thread thread = new Thread(gameLoop);
+					thread.start();
+				}
+			});
+			
+			builder.setNegativeButton("Return to Main Menu", new OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					// Return to main menu
+				}
+			});
+			
+			builder.setCancelable(false); // Cannot tap outside the dialog to cancel it
+			builder.show();
 		}
 	}
 }
