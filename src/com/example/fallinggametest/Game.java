@@ -1,7 +1,6 @@
 package com.example.fallinggametest;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -9,18 +8,25 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.View.OnTouchListener;
 
-import com.gameobjects.*;
+import com.gameobjects.GameObject;
+import com.gameobjects.HomingMissile;
+import com.gameobjects.ScoreLabel;
+import com.gameobjects.SkyBackground;
+import com.gameobjects.Trooper;
 
 /**
  * 
@@ -62,6 +68,7 @@ public class Game extends Activity implements OnTouchListener {
 	public final static String HIGH_SCORE_KEY = "HIGH_SCORE_KEY";
 	
 	private AlertDialog dialog;
+	private Thread thread;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState){
@@ -118,7 +125,7 @@ public class Game extends Activity implements OnTouchListener {
 		gameWorld.setOnTouchListener(this);
 		
 		
-		 
+		 getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 	}
 	
 	@Override
@@ -152,8 +159,9 @@ public class Game extends Activity implements OnTouchListener {
 					editor.commit();
 				}
 				
-				Thread thread = new Thread(gameLoop);
-				thread.start();
+				
+				//Thread thread = new Thread(gameLoop);
+				//thread.start();
 				dialog.cancel();
 				dialog.dismiss();
 			}
@@ -385,56 +393,62 @@ public class Game extends Activity implements OnTouchListener {
 		
 		if(trooper.isAlive() == false) {
 			
-			gameLoop.stop();
-			
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			View view;
-			
-			if(currentScore > getSharedPreferences(SHARED_PREFERENCES_KEY, 
-					Context.MODE_PRIVATE).getInt(HIGH_SCORE_KEY, 0)) {
-				view = getLayoutInflater().inflate(R.layout.high_score, null);
-				builder.setTitle("Congratulations!");
-				
-				SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_KEY, 
-						Context.MODE_PRIVATE);
-				Editor editor = preferences.edit();
-				
-				if(preferences.contains(HIGH_SCORE_KEY))
-					editor.remove(HIGH_SCORE_KEY);
-				
-				editor.putInt(HIGH_SCORE_KEY, currentScore);
-				editor.commit();				
-			}
-			else {
-				view = getLayoutInflater().inflate(R.layout.game_over, null);
-				builder.setTitle("You crashed!");
-			}
-			
-			
-			builder.setView(view);
-			builder.setPositiveButton("Play Again?", new OnClickListener() {
+			this.runOnUiThread(new Runnable() {
 				
 				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					// Restart the game
-					gameWorld = new GameWorld(Game.this, gameObjects);
-					gameLoop = new GameLoop(Game.this, gameWorld);
+				public void run() {
+					gameLoop.stop();
 					
-					Thread thread = new Thread(gameLoop);
-					thread.start();
+					AlertDialog.Builder builder = new AlertDialog.Builder(Game.this);
+					View view;
+					
+					if(currentScore > getSharedPreferences(SHARED_PREFERENCES_KEY, 
+							Context.MODE_PRIVATE).getInt(HIGH_SCORE_KEY, 0)) {
+						view = getLayoutInflater().inflate(R.layout.high_score, null);
+						builder.setTitle("Congratulations!");
+						
+						SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_KEY, 
+								Context.MODE_PRIVATE);
+						Editor editor = preferences.edit();
+						
+						if(preferences.contains(HIGH_SCORE_KEY))
+							editor.remove(HIGH_SCORE_KEY);
+						
+						editor.putInt(HIGH_SCORE_KEY, currentScore);
+						editor.commit();				
+					}
+					else {
+						view = getLayoutInflater().inflate(R.layout.game_over, null);
+						builder.setTitle("You crashed!");
+					}
+					
+					
+					builder.setView(view);
+					builder.setPositiveButton("Play Again?", new OnClickListener() {
+						
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							Game.this.finish();
+							Intent intent = new Intent(Game.this, Game.class);
+							startActivity(intent);
+						}
+					});
+					
+					builder.setNegativeButton("Return to Main Menu", new OnClickListener() {
+						
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							Game.this.finish();
+							Intent intent = new Intent(Game.this, MainMenu.class);
+							startActivity(intent);
+						}
+					});
+					
+					builder.setCancelable(false); // Cannot tap outside the dialog to cancel it
+					builder.show();
 				}
 			});
 			
-			builder.setNegativeButton("Return to Main Menu", new OnClickListener() {
-				
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					// Return to main menu
-				}
-			});
-			
-			builder.setCancelable(false); // Cannot tap outside the dialog to cancel it
-			builder.show();
 		}
 	}
 }

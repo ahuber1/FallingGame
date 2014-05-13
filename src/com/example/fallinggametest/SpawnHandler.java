@@ -48,7 +48,7 @@ public class SpawnHandler {
 		int waitTimeMillis = 500 + rand.nextInt(1000);
 		
 		// do the spawning
-		if(waitTimeMillis >= timeSinceLastSpawn){
+		if(timeSinceLastSpawn >= waitTimeMillis){
 		
 			// generate a random integer between 0 and 9999
 			int randomSpawnKey = rand.nextInt(10000);
@@ -176,7 +176,7 @@ public class SpawnHandler {
 		PhysVector targetLocation = new PhysVector(targetX, 0);
 		
 		
-		NormalMissile normMissile = new NormalMissile(xpos, 0, speedMultiplier * randomSpeed, targetLocation, game);
+		NormalMissile normMissile = new NormalMissile(xpos, game.screenHeight, speedMultiplier * randomSpeed, targetLocation, game);
 		game.addGameObject(normMissile);
 	}
 	

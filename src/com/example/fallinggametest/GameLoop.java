@@ -2,7 +2,7 @@ package com.example.fallinggametest;
 
 import java.util.concurrent.TimeUnit;
 
-import android.util.Log;
+import android.os.Handler;
 
 public class GameLoop implements Runnable {
 
@@ -11,13 +11,14 @@ public class GameLoop implements Runnable {
 	 */
 	private Game game;
 	
+	private Handler handler;
+	
 	private boolean running;
 	
 	public static final int FPS = 60;
 	public static final int DELAY = 1000 / FPS;
 	
-	public GameLoop(Game game, GameWorld gameWorld){
-		
+	public GameLoop(Game game, GameWorld gameWorld) {
 		this.game = game;
 	}
 	
@@ -36,7 +37,7 @@ public class GameLoop implements Runnable {
 				game.spawnHandling();
 				game.removeDeadGameObjects();
 				game.incrementScore(1);
-				game.incrementTime(33);
+				game.incrementTime(1000 / FPS);
 				
 				// force a redraw on the screen
 				game.redrawCanvas();

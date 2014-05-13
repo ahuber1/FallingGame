@@ -119,6 +119,7 @@ public class HomingMissile extends Missile{
 	public void setTarget(GameObject obj){
 		
 		this.target = obj;
+		this.targetAcquired = true;
 	}
 	
 	@Override

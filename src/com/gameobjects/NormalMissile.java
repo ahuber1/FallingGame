@@ -37,6 +37,8 @@ public class NormalMissile extends Missile{
 				
 		x += dx * deltaTime;
 		y += dy * deltaTime;
+		
+		hitbox.setPosition((int) this.getCenterX(), (int) this.getCenterY());
 	}
 	
 	

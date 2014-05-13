@@ -137,6 +137,9 @@ private SensorEventListener listener = new SensorEventListener() {
 			double direction = xraw / x;
 			
 			dx = (float) (percentage * MAX_SPEED * direction * 2);
+			
+			if(x == 0)
+				dx = 0;
 		}
 		
 		@Override
