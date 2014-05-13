@@ -21,6 +21,8 @@ public class GameLoop implements Runnable {
 	public void run() {
 		running = true;
 		
+		
+		
 		while (running) {
 			try {
 				

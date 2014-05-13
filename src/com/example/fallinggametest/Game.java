@@ -18,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.View.OnTouchListener;
 
 import com.gameobjects.Bird;
@@ -66,6 +67,8 @@ public class Game extends Activity implements OnTouchListener {
 	public final static String HIGH_SCORE_KEY = "HIGH_SCORE_KEY";
 	
 	private AlertDialog dialog;
+	private boolean paused;
+	
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState){
@@ -117,10 +120,9 @@ public class Game extends Activity implements OnTouchListener {
 		addInitialGameObjects();
 		
 		// give gameWorld a touch listener
-		gameWorld.setOnTouchListener(this);
+		gameWorld.setOnTouchListener(this);	 
 		
-		
-		 
+		paused = false;
 	}
 	
 	@Override
@@ -191,8 +193,14 @@ public class Game extends Activity implements OnTouchListener {
 	protected void onResume() {
 		super.onResume();
 		
-		// create and start the GameLoop Runnable class
-		startGameLoop();
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		
+		if(paused) {
+			Thread thread = new Thread(gameLoop);
+			thread.start();
+		}
+		else
+			startGameLoop();
 	}
 	
 	
@@ -234,6 +242,7 @@ public class Game extends Activity implements OnTouchListener {
 	public void onPause(){
 		super.onPause();
 		gameLoop.stop();
+		paused = true;
 	}
 	
 	public void redrawCanvas(){
@@ -364,7 +373,7 @@ public class Game extends Activity implements OnTouchListener {
 			//depending on time since last spawn
 			boolean leftSpawn = (timeSinceLastSpawn % 2 == 0);
 			
-			int yPos = 400 + rand.nextInt(screenHeight);
+			int yPos = rand.nextInt(screenHeight);
 			
 			if(leftSpawn){
 				Bird b = new Bird(0, yPos, 300, -300, this);
