@@ -1,5 +1,6 @@
 package com.example.fallinggametest;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import android.app.Activity;
@@ -13,14 +14,15 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.View.OnTouchListener;
+import android.view.WindowManager;
+import android.widget.TextView;
 
 import com.gameobjects.GameObject;
 import com.gameobjects.HomingMissile;
@@ -160,8 +162,8 @@ public class Game extends Activity implements OnTouchListener {
 				}
 				
 				
-				//Thread thread = new Thread(gameLoop);
-				//thread.start();
+				thread = new Thread(gameLoop);
+				thread.start();
 				dialog.cancel();
 				dialog.dismiss();
 			}
@@ -171,7 +173,7 @@ public class Game extends Activity implements OnTouchListener {
 			
 			@Override
 			public void onCancel(DialogInterface dialog) {
-				Thread thread = new Thread(gameLoop);
+				thread = new Thread(gameLoop);
 				thread.start();
 				dialog.cancel();
 				dialog.dismiss();				
@@ -208,7 +210,7 @@ public class Game extends Activity implements OnTouchListener {
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
 		if(gameLoop.isRunning() == false) {
-			Thread thread = new Thread(gameLoop);
+			thread = new Thread(gameLoop);
 			thread.start();
 		}
 		
@@ -289,7 +291,7 @@ public class Game extends Activity implements OnTouchListener {
 	public void startGameLoop(){
 		
 		this.gameLoop = new GameLoop(this, this.gameWorld);
-		Thread thread = new Thread(gameLoop);
+		thread = new Thread(gameLoop);
 		thread.start();		
 	}
 	
@@ -399,13 +401,19 @@ public class Game extends Activity implements OnTouchListener {
 				public void run() {
 					gameLoop.stop();
 					
+					int highScore = getSharedPreferences(SHARED_PREFERENCES_KEY, 
+							Context.MODE_PRIVATE).getInt(HIGH_SCORE_KEY, 0);
+					
 					AlertDialog.Builder builder = new AlertDialog.Builder(Game.this);
 					View view;
 					
-					if(currentScore > getSharedPreferences(SHARED_PREFERENCES_KEY, 
-							Context.MODE_PRIVATE).getInt(HIGH_SCORE_KEY, 0)) {
+					if(currentScore > highScore) {
 						view = getLayoutInflater().inflate(R.layout.high_score, null);
 						builder.setTitle("Congratulations!");
+						
+						DecimalFormat formatter = new DecimalFormat("#,###");
+						TextView textView = (TextView) view.findViewById(R.id.scoreView);
+						textView.setText("Your score was " + formatter.format(currentScore));
 						
 						SharedPreferences preferences = getSharedPreferences(SHARED_PREFERENCES_KEY, 
 								Context.MODE_PRIVATE);

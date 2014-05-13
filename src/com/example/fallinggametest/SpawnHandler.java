@@ -96,11 +96,11 @@ public class SpawnHandler {
 		
 		if(leftSide){
 			
-			Bird bird = new Bird(0,ypos, speedMultiplier * 200, speedMultiplier * 50, game );
+			Bird bird = new Bird(0,ypos, speedMultiplier * 200, speedMultiplier * -50, game );
 			game.addGameObject(bird);
 		} else {
 			
-			Bird bird = new Bird(0,ypos, speedMultiplier * -200, speedMultiplier * 50, game );
+			Bird bird = new Bird(0,ypos, speedMultiplier * -200, speedMultiplier * -50, game );
 			game.addGameObject(bird);
 		}
 	}
@@ -119,11 +119,11 @@ public class SpawnHandler {
 				
 		if(leftSide){
 					
-			Plane plane = new Plane(0,ypos, speedMultiplier * 500, speedMultiplier * 300, game );
+			Plane plane = new Plane(0,ypos, speedMultiplier * 500, speedMultiplier * -300, game );
 			game.addGameObject(plane);
 		} else {
 					
-			Plane plane = new Plane(0,ypos, speedMultiplier * -500, speedMultiplier * 300, game );
+			Plane plane = new Plane(0,ypos, speedMultiplier * -500, speedMultiplier * -300, game );
 			game.addGameObject(plane);
 		}
 	
@@ -140,11 +140,11 @@ public class SpawnHandler {
 						
 		if(leftSide){
 							
-			UFO ufo = new UFO(0,ypos, speedMultiplier * 400, speedMultiplier * 400, game );
+			UFO ufo = new UFO(0,ypos, speedMultiplier * 400, speedMultiplier * -400, game );
 			game.addGameObject(ufo);
 		} else {
 							
-			UFO ufo = new UFO(0,ypos, speedMultiplier * -400, speedMultiplier * 400, game );
+			UFO ufo = new UFO(0,ypos, speedMultiplier * -400, speedMultiplier * -400, game );
 			game.addGameObject(ufo);
 		}
 	}
@@ -157,7 +157,8 @@ public class SpawnHandler {
 		
 		int xpos = rand.nextInt(game.screenWidth);
 		
-		Balloon balloon = new Balloon(xpos, game.screenHeight, speedMultiplier * 0, speedMultiplier * 500, game);
+		Balloon balloon = new Balloon(xpos, game.screenHeight, speedMultiplier * 0, 
+				speedMultiplier * -500, game);
 		game.addGameObject(balloon);
 	}
 	
