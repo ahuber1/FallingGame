@@ -19,17 +19,18 @@ public class Trooper extends GameObject{
 	
 	private PhysVector destination;
 	
-	public final float MAX_SPEED = 600;
+	public final float MAX_SPEED;
 	
 	private int orientation;
 	
 	private Game game;
 	
-	public Trooper(float x, float y, Game game) {
+	public Trooper(float x, float y, Game game, int gameWidth) {
 		
 		this.x = x;
 		this.y = y;
 		this.game = game;
+		this.MAX_SPEED = gameWidth;
 		
 		dx = dy = dx2 = dy2 = 0;
 		

@@ -8,13 +8,14 @@ import android.graphics.Paint.Style;
 public class ScoreLabel extends GameObject{
 	
 	public int score;
+	public int gameHeight;
 
-	public ScoreLabel(float x, float y){
+	public ScoreLabel(float x, float y, int gameHeight){
 		
 		this.x = x;
 		this.y = y;
-		
 		this.score = 0;
+		this.gameHeight = gameHeight;
 	}
 	
 	public void setScore(int score){
@@ -29,7 +30,7 @@ public class ScoreLabel extends GameObject{
 		Paint paint = new Paint();
 		paint.setColor(Color.RED);
 		paint.setStyle(Style.FILL);
-		paint.setTextSize(30);
+		paint.setTextSize(gameHeight / 30);
 		
 		canvas.drawText(text, x, y, paint);
 		

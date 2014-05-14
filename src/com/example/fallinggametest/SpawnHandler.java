@@ -82,10 +82,6 @@ public class SpawnHandler {
 	}
 	
 	
-	/**
-	 * Spawns a Bird in the Game
-	 * @param rand
-	 */
 	private void spawnBird(Random rand){
 		
 		// get a random y position
@@ -93,14 +89,13 @@ public class SpawnHandler {
 		
 		// use random number to determine which side of screen to spawn
 		boolean leftSide = (ypos % 2 == 0);
+		int velocity = game.screenWidth / 3;
 		
-		if(leftSide){
-			
-			Bird bird = new Bird(0,ypos, speedMultiplier * 200, speedMultiplier * -50, game );
+		if(leftSide) {
+			Bird bird = new Bird(0,ypos, speedMultiplier * velocity, -game.screenHeight / 6, game );
 			game.addGameObject(bird);
 		} else {
-			
-			Bird bird = new Bird(0,ypos, speedMultiplier * -200, speedMultiplier * -50, game );
+			Bird bird = new Bird(0,ypos, speedMultiplier * -velocity, -game.screenHeight / 6, game );
 			game.addGameObject(bird);
 		}
 	}
@@ -116,14 +111,15 @@ public class SpawnHandler {
 				
 		// use random number to determine which side of screen to spawn
 		boolean leftSide = (ypos % 2 == 0);
+		int velocity = game.screenWidth / 3;
 				
 		if(leftSide){
 					
-			Plane plane = new Plane(0,ypos, speedMultiplier * 500, speedMultiplier * -300, game );
+			Plane plane = new Plane(0,ypos, speedMultiplier * velocity, -game.screenHeight / 6, game );
 			game.addGameObject(plane);
 		} else {
 					
-			Plane plane = new Plane(0,ypos, speedMultiplier * -500, speedMultiplier * -300, game );
+			Plane plane = new Plane(0,ypos, speedMultiplier * -velocity, -game.screenHeight / 6, game );
 			game.addGameObject(plane);
 		}
 	
@@ -137,14 +133,15 @@ public class SpawnHandler {
 						
 		// use random number to determine which side of screen to spawn
 		boolean leftSide = (ypos % 2 == 0);
+		int velocity = game.screenWidth / 3;
 						
 		if(leftSide){
 							
-			UFO ufo = new UFO(0,ypos, speedMultiplier * 400, speedMultiplier * -400, game );
+			UFO ufo = new UFO(0,ypos, speedMultiplier * velocity, -game.screenHeight / 6, game );
 			game.addGameObject(ufo);
 		} else {
 							
-			UFO ufo = new UFO(0,ypos, speedMultiplier * -400, speedMultiplier * -400, game );
+			UFO ufo = new UFO(0,ypos, speedMultiplier * -velocity, -game.screenHeight / 6, game );
 			game.addGameObject(ufo);
 		}
 	}
@@ -156,9 +153,10 @@ public class SpawnHandler {
 	private void spawnBalloon(Random rand){
 		
 		int xpos = rand.nextInt(game.screenWidth);
+		int velocity = game.screenHeight / 4;
 		
 		Balloon balloon = new Balloon(xpos, game.screenHeight, speedMultiplier * 0, 
-				speedMultiplier * -500, game);
+				speedMultiplier * -velocity, game);
 		game.addGameObject(balloon);
 	}
 	
@@ -172,7 +170,7 @@ public class SpawnHandler {
 		
 		int targetX = rand.nextInt(game.screenWidth);
 		
-		int randomSpeed = 400 + rand.nextInt(400);
+		float randomSpeed = (float) (game.screenHeight / (rand.nextInt(1) + 2));
 		
 		PhysVector targetLocation = new PhysVector(targetX, 0);
 		
@@ -185,9 +183,10 @@ public class SpawnHandler {
 		
 		int xpos = rand.nextInt(game.screenWidth);
 		
-		int randomSpeed = 200 + rand.nextInt(100);
+		float randomSpeed = (float) (game.screenHeight / (rand.nextInt(1) + 2));
 		
-		HomingMissile homingMissile = new HomingMissile(xpos, game.screenHeight, speedMultiplier * randomSpeed,game.screenWidth , game );
+		HomingMissile homingMissile = new HomingMissile(xpos, game.screenHeight, speedMultiplier * 
+				randomSpeed,game.screenWidth , game );
 		
 		game.lockMissileOnTrooper(homingMissile);
 		

@@ -12,35 +12,19 @@ public class MainMenu extends Activity implements OnTouchListener{
 	
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-		
 		setContentView(R.layout.main_menu);
-		
-		findViewById(R.id.accelControl).setOnTouchListener(this);
-		findViewById(R.id.touchControl).setOnTouchListener(this);
+        findViewById(R.id.menu).setOnTouchListener(this);
 	}
 	
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
-		
-		if(v == findViewById(R.id.accelControl)){
-			
-			Intent intent = new Intent(this, Game.class);
-			intent.putExtra("useAccel", true);
-			startActivity(intent);
-			
-			return true;
-		}
-		 
-		if(v == findViewById(R.id.touchControl)){
-			
-			Intent intent = new Intent(this, Game.class);
-			intent.putExtra("useTouch", true);
-			startActivity(intent);
-			
-			return true;
-		}
-		   
-		return false;
+		if(v == findViewById(R.id.menu))
+        {
+            Intent intent = new Intent (this, Game.class);
+            intent.putExtra("useAccel", true);
+            startActivity(intent);
+            return true;
+        }
+        return false;
 	}
-	
 }

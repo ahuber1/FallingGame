@@ -15,7 +15,6 @@ import android.content.SharedPreferences.Editor;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MotionEvent;
@@ -71,6 +70,7 @@ public class Game extends Activity implements OnTouchListener {
 	
 	private AlertDialog dialog;
 	private Thread thread;
+	private boolean dialogOpen = false;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState){
@@ -125,9 +125,6 @@ public class Game extends Activity implements OnTouchListener {
 		
 		// give gameWorld a touch listener
 		gameWorld.setOnTouchListener(this);
-		
-		
-		 getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 	}
 	
 	@Override
@@ -140,7 +137,8 @@ public class Game extends Activity implements OnTouchListener {
 	
 	@Override
 	public boolean onMenuOpened(int featureId, Menu menu) {
-		closeOptionsMenu();		
+		closeContextMenu();
+		closeOptionsMenu();
 		gameLoop.stop();
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -198,6 +196,8 @@ public class Game extends Activity implements OnTouchListener {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		
 		// create and start the GameLoop Runnable class
 		startGameLoop();
@@ -315,11 +315,11 @@ public class Game extends Activity implements OnTouchListener {
 				R.drawable.background), screenWidth, screenHeight);
 		addGameObject(background);
 		
-		Trooper trooper = new Trooper(350, 300, this);
+		Trooper trooper = new Trooper(350, 300, this, screenWidth);
 		this.trooper = trooper; // store a reference to trooper
 		addGameObject(trooper);
 		
-		ScoreLabel label = new ScoreLabel(15,25);
+		ScoreLabel label = new ScoreLabel(15, screenHeight / 20, screenHeight);
 		this.scoreLabel = label; // store a reference to scoreLabel
 		addGameObject(label);
 	}
@@ -436,6 +436,7 @@ public class Game extends Activity implements OnTouchListener {
 						
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
+							dialogOpen = false;
 							Game.this.finish();
 							Intent intent = new Intent(Game.this, Game.class);
 							startActivity(intent);
@@ -446,6 +447,7 @@ public class Game extends Activity implements OnTouchListener {
 						
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
+							dialogOpen = false;
 							Game.this.finish();
 							Intent intent = new Intent(Game.this, MainMenu.class);
 							startActivity(intent);
@@ -453,7 +455,11 @@ public class Game extends Activity implements OnTouchListener {
 					});
 					
 					builder.setCancelable(false); // Cannot tap outside the dialog to cancel it
-					builder.show();
+					
+					if(dialogOpen == false) {
+						dialogOpen = true;
+						builder.show();
+					}
 				}
 			});
 			

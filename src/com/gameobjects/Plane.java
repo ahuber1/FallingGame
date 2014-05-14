@@ -17,8 +17,8 @@ public class Plane extends GameObject{
 		this.dx = dx;
 		this.dy = dy;
 		
-		this.spriteL = BitmapFactory.decodeResource(context.getResources(), R.drawable.planl);
-		this.spriteR = BitmapFactory.decodeResource(context.getResources(), R.drawable.planr);
+		this.spriteL = BitmapFactory.decodeResource(context.getResources(), R.drawable.planel);
+		this.spriteR = BitmapFactory.decodeResource(context.getResources(), R.drawable.planer);
 		
 		if(dx > 0){
 			sprite = spriteL;
