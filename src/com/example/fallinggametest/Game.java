@@ -42,34 +42,91 @@ public class Game extends Activity implements OnTouchListener {
 	private GameWorld gameWorld;
 	
 	
-	/** The class which contains the necessary looping for calling 
+	/** 
+	 * The class which contains the necessary looping for calling 
 	 * the Game's methods. 
 	 */
 	private GameLoop gameLoop;
 	
+	/**
+	 * Handles GameObject creation
+	 */
 	private SpawnHandler spawnHandler;
 	
 	/**
-	 * Determine whether to control Trooper using touch screen or accelerometer
+	 * Determines whether to control Trooper using touch screen or accelerometer
 	 */
 	public boolean useAccelerometer;
 	
-	public int screenWidth, screenHeight;
+	/**
+	 * The screen width
+	 */
+	public int screenWidth;
 	
+	/**
+	 * The screen height
+	 */
+	public int screenHeight;
+	
+	/**
+	 * All the GameObjects currently in the game
+	 */
 	private ArrayList<GameObject> gameObjects;
 	
+	/**
+	 * The paratrooper
+	 */
 	private Trooper trooper;
 	
+	/**
+	 * A label keeping track of the score
+	 */
 	private ScoreLabel scoreLabel;
 	
-	private int currentScore, timeInMillis, timeSinceLastSpawn;
+	/**
+	 * The current score in the game
+	 */
+	private int currentScore;
 	
+	/**
+	 * The amount of time that has passed in milliseconds
+	 */
+	private int timeInMillis;
+	
+	/**
+	 * The amount of time that has elapsed since the last GameObject was spawned
+	 */
+	private int timeSinceLastSpawn;
+	
+	/**
+	 * Used to access the user setting that determines the user's preference for
+	 * using the accelerometer versus using the screen
+	 */
 	public final static String USE_ACCELEROMETER_KEY = "USE_ACCELEROMETER";
+	
+	/**
+	 * Used to access this app's SharedPreferences
+	 */
 	public final static String SHARED_PREFERENCES_KEY = "SHARED_PREFERENCES_KEY";
+	
+	/**
+	 * Used to access the high score on record from the SharedPreferences
+	 */
 	public final static String HIGH_SCORE_KEY = "HIGH_SCORE_KEY";
 	
+	/**
+	 * The dialog that is showing
+	 */
 	private AlertDialog dialog;
+	
+	/**
+	 * The thread running the GameLoop
+	 */
 	private Thread thread;
+	
+	/**
+	 * Is a dialog open?
+	 */
 	private boolean dialogOpen = false;
 	
 	@Override
@@ -127,6 +184,10 @@ public class Game extends Activity implements OnTouchListener {
 		gameWorld.setOnTouchListener(this);
 	}
 	
+	/**
+	 * Inflates a blank menu so the menu button will show and a dialog
+	 * will be opened in {@link Game#onMenuOpened(int, Menu)}
+	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		
@@ -135,6 +196,10 @@ public class Game extends Activity implements OnTouchListener {
 		return true;
 	}
 	
+	/**
+	 * Called when the menu button is pressed. This method closes the menu
+	 * and then creates a pop-up to pause the game and control settings.
+	 */
 	@Override
 	public boolean onMenuOpened(int featureId, Menu menu) {
 		menu.getItem(0).setVisible(false);		
@@ -189,11 +254,17 @@ public class Game extends Activity implements OnTouchListener {
 		return true;
 	}
 	
+	/**
+	 * Disables the back button
+	 */
 	@Override
 	public void onBackPressed() {
 		// Do nothing...
 	}
 	
+	/**
+	 * Resumes the game loop and keeps the screen turned on
+	 */
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -245,16 +316,28 @@ public class Game extends Activity implements OnTouchListener {
 		gameLoop.stop();
 	}
 	
+	/**
+	 * Redraws the GameWorld's canvas (this Activity displays the
+	 * GameWorld's Canvas)
+	 */
 	public void redrawCanvas(){
 		
 		this.gameWorld.postInvalidate();
 	}
 	
+	/**
+	 * Returns the current score
+	 * @return the current score
+	 */
 	public int getCurrentScore(){
 		
 		return this.currentScore;
 	}
 	
+	/**
+	 * Returns the amount of time that has elapsed since the start of the game
+	 * @return the amount of time that has elapsed since the start of the game
+	 */
 	public int getTimeInMillis(){
 		
 		return timeInMillis;
@@ -262,7 +345,7 @@ public class Game extends Activity implements OnTouchListener {
 	
 	/**
 	 * Increases the score, and changes the ScoreLabel to display this new score
-	 * @param amount
+	 * @param amount the increment amount
 	 */
 	public void incrementScore(int amount){
 		
@@ -277,7 +360,7 @@ public class Game extends Activity implements OnTouchListener {
 	
 	/**
 	 * Increments both variables keeping track of a time
-	 * @param amount
+	 * @param amount the increment amount
 	 */
 	public void incrementTime(int amount){
 		
@@ -352,16 +435,17 @@ public class Game extends Activity implements OnTouchListener {
 		
 	}
 	
+	/**
+	 * Locks a HomingMissile onto the paratrooper
+	 * @param missile The missile that needs a target
+	 */
 	public void lockMissileOnTrooper(HomingMissile missile){
 		
 		missile.setTarget(this.trooper);
 	}
 
 	/** 
-	 * TODO
-	 * (NOT YET COMPLETE)
 	 * This is where enemies in the game are spawned
-	 *
 	 */
 	public void spawnHandling(){
 		
@@ -391,7 +475,10 @@ public class Game extends Activity implements OnTouchListener {
 		}
 	}
 	
-	
+	/**
+	 * Checks to see if the trooper has collided with any GameObject. If so,
+	 * gracefully end the game.
+	 */
 	public void checkForStopCondition(){
 		
 		if(trooper.isAlive() == false) {
