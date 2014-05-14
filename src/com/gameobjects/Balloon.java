@@ -11,7 +11,7 @@ import com.example.fallinggametest.R;
 public class Balloon extends GameObject
 {
     /**
-     * Constructs a new hot air balloon game object.
+     * Constructs a new hot air balloon game object. 
      * @param x the starting x coordinate
      * @param y the starting y coordinate
      * @param dx the velocity on the x axis
