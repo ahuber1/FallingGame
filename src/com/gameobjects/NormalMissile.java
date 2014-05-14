@@ -28,7 +28,7 @@ public class NormalMissile extends Missile{
 		this.speed = speed;
 		this.waypoint = waypoint;
 		
-		this.sprite = BitmapFactory.decodeResource(context.getResources(), R.drawable.missile_sprite);
+		this.sprite = BitmapFactory.decodeResource(context.getResources(), R.drawable.missile);
 		
 		// add the hitbox to this gameobject
 		createHitboxForSprite();
