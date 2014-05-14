@@ -10,7 +10,7 @@ import android.graphics.BitmapFactory;
  * Defines the airplane game object for Falling.
  */
 public class Plane extends GameObject{
-	
+	Bitmap sprite, spriteL, spriteR;
 	/**
 	 * Constructs a new airplane game object.
          * @param x the starting x coordinate
