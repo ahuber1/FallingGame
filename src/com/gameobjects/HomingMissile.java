@@ -7,6 +7,9 @@ import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 
+/**
+ * Defines the homing missile class, a special type of missile that tracks the paratrooper in Falling.
+ */
 public class HomingMissile extends Missile{
 
 	private GameObject target;
@@ -15,12 +18,12 @@ public class HomingMissile extends Missile{
 	
 	/**
 	 * Constructor for HomingMissile when it HAS a target
-	 * @param x
-	 * @param y
-	 * @param speed
-	 * @param screenWidth
-	 * @param target
-	 * @param context
+	 * @param x the starting x position
+	 * @param y the starting y position
+	 * @param speed the missile velocity
+	 * @param screenWidth the width of the game screen
+	 * @param target the target for the missile to track
+	 * @param context information about the application environment
 	 */
 	public HomingMissile(float x, float y,float speed, int screenWidth, GameObject target, Context context){
 		
@@ -33,11 +36,11 @@ public class HomingMissile extends Missile{
 	
 	/**
 	 * Constructor for HomingMissile when it DOESN'T have a target
-	 * @param x
-	 * @param y
-	 * @param speed
-	 * @param screenWidth
-	 * @param context
+	 * @param x the starting x position
+	 * @param y the starting y position
+	 * @param speed the missile velocity
+	 * @param screenWidth the width of the game screen
+	 * @param context information about the application environment
 	 */
 	public HomingMissile(float x, float y, float speed, int screenWidth, Context context){
 		
@@ -64,9 +67,12 @@ public class HomingMissile extends Missile{
 		this.waypoint = new PhysVector(0,0);
 		
 	}
-	
-	
-	
+
+
+    /**
+     * Updates the location and orientation of the homing missile
+     * @param deltaTime the time increment.
+     */
 	@Override
 	public void updatePhysics(float deltaTime){
 		
@@ -115,13 +121,21 @@ public class HomingMissile extends Missile{
 		}
 		
 	}
-	
+
+    /**
+     * Sets a new target for this homing missile.
+     * @param obj the target to lock onto
+     */
 	public void setTarget(GameObject obj){
 		
 		this.target = obj;
 		this.targetAcquired = true;
 	}
-	
+
+    /**
+     * Draws the homing missile on the given canvas
+     * @param canvas the canvas on which to draw
+     */
 	@Override
 	public void draw(Canvas canvas){
 		
