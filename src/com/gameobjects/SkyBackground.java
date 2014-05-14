@@ -5,13 +5,22 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.util.Config;
 
+/**
+ * Defines the background for the Falling game which is treated as a game object. 
+ */
 public class SkyBackground extends GameObject{
 	
 	private Bitmap sprite2;
 	private float sprite2x, sprite2y;
 	private int screenWidth;
 	private int screenHeight;
-
+	
+	/**
+	 * Creates a new background for the Falling game.
+	 * @param sprite the background image
+	 * @param screenWidth the width of the game screen
+	 * @param screenHeight the height of the game screen
+	 */
 	public SkyBackground(Bitmap sprite, int screenWidth, int screenHeight){
 		
 		x = y = 0;
@@ -28,6 +37,10 @@ public class SkyBackground extends GameObject{
 		this.screenWidth = screenWidth;
 	}
 	
+	/**
+	 * Updates the position of the background over the given time increment
+	 * @param deltaTime the time increment
+	 */
 	public void updatePhysics(float deltaTime){
 
 		y += dy * deltaTime;
@@ -44,7 +57,10 @@ public class SkyBackground extends GameObject{
 		
 	}
 	
-	
+	/**
+	 * Draws the background onto the given canvas and scales the background with the size of the screen.
+	 * @param canvas the game canvas where the object will be drawn
+	 */
 	public void draw(Canvas canvas){
 		float sx = (screenWidth * 1.0f) / this.sprite.getWidth();
 		float sy = (screenHeight * 1.0f) / this.sprite.getHeight();
