@@ -58,7 +58,7 @@ public class HomingMissile extends Missile{
 		
 		dx = dy = dx2 = dy2 = 0;
 		
-		this.sprite = BitmapFactory.decodeResource(context.getResources(), R.drawable.missile);
+		this.sprite = BitmapFactory.decodeResource(context.getResources(), R.drawable.missile_sprite);
 		
 		// add the hitbox to this game object
 		createHitboxForSprite();
