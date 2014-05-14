@@ -6,8 +6,19 @@ import com.example.fallinggametest.R;
 import android.content.Context;
 import android.graphics.BitmapFactory;
 
+/**
+ * Defines methods and data for the normal, unguided missile in the Falling game.
+ */
 public class NormalMissile extends Missile{
 
+    /**
+     * Creates an unguided missile and its hitbox.
+     * @param x the starting x coordinate
+     * @param y the starting y coordinate
+     * @param speed the velocity of the missile
+     * @param waypoint the target point for the missile to travel to
+     * @param context information regarding the application environment
+     */
 	public NormalMissile(float x, float y, float speed, PhysVector waypoint, Context context){
 		
 		this.alive = true;
@@ -22,7 +33,11 @@ public class NormalMissile extends Missile{
 		// add the hitbox to this gameobject
 		createHitboxForSprite();
 	}
-	
+
+    /**
+     * Updates the position of the missile and its travel along its vector.
+     * @param deltaTime the time increment.
+     */
 	@Override
 	public void updatePhysics(float deltaTime){
 		
