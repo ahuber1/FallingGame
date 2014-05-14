@@ -137,6 +137,7 @@ public class Game extends Activity implements OnTouchListener {
 	
 	@Override
 	public boolean onMenuOpened(int featureId, Menu menu) {
+		menu.getItem(0).setVisible(false);		
 		closeContextMenu();
 		closeOptionsMenu();
 		gameLoop.stop();

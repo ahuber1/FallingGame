@@ -18,5 +18,6 @@ public class Balloon extends GameObject
         this.dy = dy;
 
         this.sprite = BitmapFactory.decodeResource(context.getResources(), R.drawable.balloon);
+        createHitboxForSprite();
     }
 }

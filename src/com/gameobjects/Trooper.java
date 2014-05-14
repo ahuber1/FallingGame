@@ -64,6 +64,8 @@ public class Trooper extends GameObject{
 					this.alive = false;
 				}
 			}
+			else if(this.x + sprite.getWidth() <= 0 || this.x >= game.screenWidth)
+				this.alive = false;
 		}
 	}
 	
